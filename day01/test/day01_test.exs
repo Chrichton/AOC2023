@@ -10,6 +10,6 @@ defmodule Day01Test do
   end
 
   test "solve star1" do
-    assert Day01.solve1("star1") == 142
+    assert Day01.solve1("star1") == 54159
   end
 end
