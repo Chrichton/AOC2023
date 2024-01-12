@@ -2,6 +2,18 @@ defmodule Day02 do
   def solve1(filename) do
     filename
     |> read_input()
+    |> check_cube_sets(%{"red" => 12, "green" => 13, "blue" => 14})
+    |> Enum.filter(fn {_, possible} -> possible end)
+    |> Enum.map(fn {game_no, _} -> game_no end)
+    |> Enum.sum()
+  end
+
+  def check_cube_sets(games_and_cubesets, bag_of_cubes = %{}) do
+    games_and_cubesets
+    |> Enum.map(fn {game_no, cube_set} ->
+      {game_no, bag_of_cubes}
+      {game_no, possible?(cube_set, bag_of_cubes)}
+    end)
   end
 
   def read_input(filename) do
@@ -31,7 +43,7 @@ defmodule Day02 do
 
   def possible?(cube_sets, bag_of_cubes = %{}) when is_list(cube_sets) do
     cube_sets
-    |> Enum.reduce(true, fn cube_set, acc ->
+    |> Enum.reduce_while(true, fn cube_set, acc ->
       if possible?(cube_set, bag_of_cubes),
         do: {:cont, acc},
         else: {:halt, false}
@@ -44,7 +56,7 @@ defmodule Day02 do
       cube_color_count = Map.get(cube_set, cube_color)
       bag_color_count = Map.get(bag_of_cubes, cube_color)
 
-      if bag_color_count != nil and cube_color_count >= bag_color_count,
+      if bag_color_count != nil and cube_color_count <= bag_color_count,
         do: {:cont, acc},
         else: {:halt, false}
     end)
