@@ -8,28 +8,6 @@ defmodule Day02 do
     |> Enum.sum()
   end
 
-  def check_cube_sets(games_and_cubesets, bag_of_cubes = %{}) do
-    games_and_cubesets
-    |> Enum.map(fn {game_no, cube_set} ->
-      {game_no, bag_of_cubes}
-      {game_no, possible?(cube_set, bag_of_cubes)}
-    end)
-  end
-
-  def read_input(filename) do
-    filename
-    |> File.read!()
-    |> String.split("\n", trim: true)
-    |> Enum.map(fn line ->
-      [game, cube_sets_string] =
-        String.split(line, ": ", trim: true)
-
-      [_, game_no_string] = String.split(game, " ")
-
-      {String.to_integer(game_no_string), parse(cube_sets_string)}
-    end)
-  end
-
   def parse(cube_sets_string) do
     String.split(cube_sets_string, "; ", trim: true)
     |> Enum.map(fn cube_set ->
@@ -38,6 +16,14 @@ defmodule Day02 do
         [count_string, color] = String.split(cube, " ")
         {color, String.to_integer(count_string)}
       end)
+    end)
+  end
+
+  def check_cube_sets(games_and_cubesets, bag_of_cubes = %{}) do
+    games_and_cubesets
+    |> Enum.map(fn {game_no, cube_set} ->
+      {game_no, bag_of_cubes}
+      {game_no, possible?(cube_set, bag_of_cubes)}
     end)
   end
 
@@ -59,6 +45,47 @@ defmodule Day02 do
       if bag_color_count != nil and cube_color_count <= bag_color_count,
         do: {:cont, acc},
         else: {:halt, false}
+    end)
+  end
+
+  def solve2(filename) do
+    filename
+    |> read_input()
+    |> Enum.map(fn {_game_no, cube_sets} ->
+      calc_minimal_cube_set(cube_sets)
+    end)
+    |> Enum.map(fn cube_set ->
+      cube_set
+      |> Map.values()
+      |> Enum.product()
+    end)
+    |> Enum.sum()
+  end
+
+  def calc_minimal_cube_set(cube_sets) do
+    cube_sets
+    |> Enum.reduce(%{}, fn cube_set, acc ->
+      Enum.reduce(cube_set, acc, fn {color, cube_count}, acc ->
+        Map.update(acc, color, cube_count, fn previous_count ->
+          if cube_count > previous_count,
+            do: cube_count,
+            else: previous_count
+        end)
+      end)
+    end)
+  end
+
+  def read_input(filename) do
+    filename
+    |> File.read!()
+    |> String.split("\n", trim: true)
+    |> Enum.map(fn line ->
+      [game, cube_sets_string] =
+        String.split(line, ": ", trim: true)
+
+      [_, game_no_string] = String.split(game, " ")
+
+      {String.to_integer(game_no_string), parse(cube_sets_string)}
     end)
   end
 end
