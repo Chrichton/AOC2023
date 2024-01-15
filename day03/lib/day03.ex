@@ -18,13 +18,41 @@ defmodule Day03 do
       line_chars
       |> zip3(index_numbers, look_ahead_chars)
       |> Enum.reduce(
-        {%{}, MapSet.new()},
-        fn {char, x_index, look_ahead_char}, {number_strings_map, symbols_mapset} ->
-          {number_strings_map, symbols_mapset}
+        {%{}, MapSet.new(), ""},
+        fn {char, x_index, look_ahead_char},
+           {number_strings_map, symbols_mapset, number_string} ->
+          if number_char?(char) do
+            number_string = number_string <> char
+
+            if not number_char?(look_ahead_char) do
+              number = String.to_integer(number_string)
+              number_strings_map = Map.put(number_strings_map, number, {x_index, y_index})
+              number_string = ""
+              {number_strings_map, symbols_mapset, number_string}
+            else
+              {number_strings_map, symbols_mapset, number_string}
+            end
+          else
+            if symbol?(char) do
+              symbols_mapset = MapSet.put(symbols_mapset, {x_index, y_index})
+              {number_strings_map, symbols_mapset, number_string}
+            else
+              {number_strings_map, symbols_mapset, number_string}
+            end
+          end
         end
       )
     end)
   end
+
+  def number_char?(char) do
+    number_chars =
+      0..9 |> Enum.to_list() |> Enum.map(&Integer.to_string/1)
+
+    char in number_chars
+  end
+
+  def symbol?(char), do: not number_char?(char) and char != "."
 
   def zip3([], _, _), do: []
   def zip3([x | xs], [y | ys], [z | zs]), do: [{x, y, z} | zip3(xs, ys, zs)]
