@@ -10,12 +10,13 @@ defmodule Day03 do
     filename
     |> File.read!()
     |> String.split("\n")
-    |> Enum.with_index(fn line, _y_index ->
+    |> Enum.with_index(fn line, y_index ->
       line_chars = String.codepoints(line)
-      look_ahead_chars = Enum.drop(line_chars, 1) ++ "."
+      index_numbers = 0..(String.length(line) - 1) |> Enum.to_list()
+      look_ahead_chars = Enum.drop(line_chars, 1) ++ String.codepoints(".")
 
       line_chars
-      |> zip3(0..(String.length(line) - 1) |> Enum.to_list(), look_ahead_chars)
+      |> zip3(index_numbers, look_ahead_chars)
       |> Enum.reduce(
         {%{}, MapSet.new()},
         fn {char, x_index, look_ahead_char}, {number_strings_map, symbols_mapset} ->
