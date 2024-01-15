@@ -43,6 +43,10 @@ defmodule Day03 do
         end
       )
     end)
+    |> Enum.reduce({%{}, MapSet.new()}, fn {number_strings_map, symbols_mapset, _},
+                                           {acc_map, acc_map_set} ->
+      {Map.merge(acc_map, number_strings_map), MapSet.union(acc_map_set, symbols_mapset)}
+    end)
   end
 
   def number_char?(char) do
