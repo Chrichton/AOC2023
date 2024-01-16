@@ -25,8 +25,7 @@ defmodule Day03 do
             number_string = number_string <> char
 
             if not number_char?(look_ahead_char) do
-              number = String.to_integer(number_string)
-              number_strings_map = Map.put(number_strings_map, number, {x_index, y_index})
+              number_strings_map = Map.put(number_strings_map, number_string, {x_index, y_index})
               number_string = ""
               {number_strings_map, symbols_mapset, number_string}
             else
@@ -47,6 +46,40 @@ defmodule Day03 do
                                            {acc_map, acc_map_set} ->
       {Map.merge(acc_map, number_strings_map), MapSet.union(acc_map_set, symbols_mapset)}
     end)
+    |> find_valid_part_numbers()
+    |> Map.keys()
+    |> Enum.map(&String.to_integer/1)
+    |> Enum.sum()
+  end
+
+  def find_valid_part_numbers({number_strings_map, symbols_mapset}) do
+    number_strings_map
+    |> Map.reject(fn {number_string, {x, y}} ->
+      number_string
+      |> get_neighbors({x, y})
+      |> MapSet.intersection(symbols_mapset) == MapSet.new()
+    end)
+  end
+
+  def get_neighbors(part_number, {x, y}) do
+    (x - String.length(part_number) + 1)..x
+    |> Enum.reduce(MapSet.new(), fn x_char, acc ->
+      MapSet.union(acc, get_neighbors({x_char, y}))
+    end)
+  end
+
+  def get_neighbors({x, y}) do
+    [
+      {x - 1, y},
+      {x + 1, y},
+      {x, y - 1},
+      {x, y + 1},
+      {x - 1, y - 1},
+      {x + 1, y + 1},
+      {x - 1, y + 1},
+      {x + 1, y - 1}
+    ]
+    |> MapSet.new()
   end
 
   def number_char?(char) do

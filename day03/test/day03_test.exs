@@ -1,10 +1,15 @@
 defmodule Day03Test do
   use ExUnit.Case
 
-  test "sample1" do
-    Day03.solve("sample1")
-    |> IO.inspect()
+  test "get_neighbors" do
+    Day03.get_neighbors("467", {2, 0})
+  end
 
-    # assert Day03.solve("sample1") == 4361
+  test "sample1" do
+    assert Day03.solve("sample1") == 4361
+  end
+
+  test "star1" do
+    assert Day03.solve("star") == 4361
   end
 end
