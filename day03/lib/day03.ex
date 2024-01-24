@@ -11,8 +11,8 @@ defmodule Day03 do
     |> File.read!()
     |> String.split("\n")
     |> then(fn lines -> Enum.zip(lines, 0..(Enum.count(lines) - 1)) end)
-    |> Enum.reduce({%{}, MapSet.new(), ""}, fn {line, y_index},
-                                               {number_strings_map, symbols_mapset, number_string} ->
+    |> Enum.reduce({[], MapSet.new(), ""}, fn {line, y_index},
+                                              {number_strings_pos, symbols_mapset, number_string} ->
       line_chars = String.codepoints(line)
       x_indexes = 0..(String.length(line) - 1) |> Enum.to_list()
       look_ahead_chars = Enum.drop(line_chars, 1) ++ ["."]
@@ -20,27 +20,27 @@ defmodule Day03 do
       line_chars
       |> zip3(x_indexes, look_ahead_chars)
       |> Enum.reduce(
-        {number_strings_map, symbols_mapset, number_string},
+        {number_strings_pos, symbols_mapset, number_string},
         fn {char, x_index, look_ahead_char},
-           {number_strings_map, symbols_mapset, number_string} ->
+           {number_strings_pos, symbols_mapset, number_string} ->
           if number_char?(char) do
             number_string = number_string <> char
 
             if number_char?(look_ahead_char) do
-              {number_strings_map, symbols_mapset, number_string}
+              {number_strings_pos, symbols_mapset, number_string}
             else
-              IO.inspect(label: "num: #{number_string}, #{x_index}, #{y_index}")
-              number_strings_map = Map.put(number_strings_map, number_string, {x_index, y_index})
+              number_strings_pos =
+                [{number_string, {x_index, y_index}} | number_strings_pos]
+
               number_string = ""
-              {number_strings_map, symbols_mapset, number_string}
+              {number_strings_pos, symbols_mapset, number_string}
             end
           else
             if symbol?(char) do
-              IO.inspect(label: "symbol: #{char}, #{x_index}, #{y_index}")
               symbols_mapset = MapSet.put(symbols_mapset, {x_index, y_index})
-              {number_strings_map, symbols_mapset, number_string}
+              {number_strings_pos, symbols_mapset, number_string}
             else
-              {number_strings_map, symbols_mapset, number_string}
+              {number_strings_pos, symbols_mapset, number_string}
             end
           end
         end
@@ -51,14 +51,16 @@ defmodule Day03 do
     |> Enum.sum()
   end
 
-  def find_valid_part_numbers({number_strings_map, symbols_mapset, _}) do
-    number_strings_map
-    |> Map.filter(fn {number_string, {x, y}} ->
-      number_string
-      |> get_neighbors({x, y})
-      |> MapSet.intersection(symbols_mapset) != MapSet.new()
+  def find_valid_part_numbers({number_strings_pos, symbols_mapset, _}) do
+    number_strings_pos
+    |> Enum.reduce(MapSet.new(), fn {number_string, {x, y}}, numbers ->
+      if number_string
+         |> get_neighbors({x, y})
+         |> MapSet.intersection(symbols_mapset) == MapSet.new(),
+         do: numbers,
+         else: MapSet.put(numbers, number_string)
     end)
-    |> Map.keys()
+    |> MapSet.to_list()
   end
 
   def get_neighbors(part_number, {x, y}) do
