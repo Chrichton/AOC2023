@@ -10,15 +10,17 @@ defmodule Day03 do
     filename
     |> File.read!()
     |> String.split("\n")
-    |> Enum.with_index(fn line, y_index ->
+    |> then(fn lines -> Enum.zip(lines, 0..(Enum.count(lines) - 1)) end)
+    |> Enum.reduce({%{}, MapSet.new(), ""}, fn {line, y_index},
+                                               {number_strings_map, symbols_mapset, number_string} ->
       line_chars = String.codepoints(line)
-      index_numbers = 0..(String.length(line) - 1) |> Enum.to_list()
+      x_indexes = 0..(String.length(line) - 1) |> Enum.to_list()
       look_ahead_chars = Enum.drop(line_chars, 1) ++ ["."]
 
       line_chars
-      |> zip3(index_numbers, look_ahead_chars)
+      |> zip3(x_indexes, look_ahead_chars)
       |> Enum.reduce(
-        {%{}, MapSet.new(), ""},
+        {number_strings_map, symbols_mapset, number_string},
         fn {char, x_index, look_ahead_char},
            {number_strings_map, symbols_mapset, number_string} ->
           if number_char?(char) do
@@ -27,12 +29,14 @@ defmodule Day03 do
             if number_char?(look_ahead_char) do
               {number_strings_map, symbols_mapset, number_string}
             else
+              IO.inspect(label: "num: #{number_string}, #{x_index}, #{y_index}")
               number_strings_map = Map.put(number_strings_map, number_string, {x_index, y_index})
               number_string = ""
               {number_strings_map, symbols_mapset, number_string}
             end
           else
             if symbol?(char) do
+              IO.inspect(label: "symbol: #{char}, #{x_index}, #{y_index}")
               symbols_mapset = MapSet.put(symbols_mapset, {x_index, y_index})
               {number_strings_map, symbols_mapset, number_string}
             else
@@ -42,21 +46,17 @@ defmodule Day03 do
         end
       )
     end)
-    |> Enum.reduce({%{}, MapSet.new()}, fn {number_strings_map, symbols_mapset, _},
-                                           {acc_map, acc_map_set} ->
-      {Map.merge(acc_map, number_strings_map), MapSet.union(acc_map_set, symbols_mapset)}
-    end)
     |> find_valid_part_numbers()
     |> Enum.map(&String.to_integer/1)
     |> Enum.sum()
   end
 
-  def find_valid_part_numbers({number_strings_map, symbols_mapset}) do
+  def find_valid_part_numbers({number_strings_map, symbols_mapset, _}) do
     number_strings_map
-    |> Map.reject(fn {number_string, {x, y}} ->
+    |> Map.filter(fn {number_string, {x, y}} ->
       number_string
       |> get_neighbors({x, y})
-      |> MapSet.intersection(symbols_mapset) == MapSet.new()
+      |> MapSet.intersection(symbols_mapset) != MapSet.new()
     end)
     |> Map.keys()
   end
