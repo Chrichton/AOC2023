@@ -13,7 +13,7 @@ defmodule Day03 do
     |> Enum.with_index(fn line, y_index ->
       line_chars = String.codepoints(line)
       index_numbers = 0..(String.length(line) - 1) |> Enum.to_list()
-      look_ahead_chars = Enum.drop(line_chars, 1) ++ String.codepoints(".")
+      look_ahead_chars = Enum.drop(line_chars, 1) ++ ["."]
 
       line_chars
       |> zip3(index_numbers, look_ahead_chars)
@@ -24,11 +24,11 @@ defmodule Day03 do
           if number_char?(char) do
             number_string = number_string <> char
 
-            if not number_char?(look_ahead_char) do
-              number_strings_map = Map.put(number_strings_map, number_string, {x_index, y_index})
-              number_string = ""
+            if number_char?(look_ahead_char) do
               {number_strings_map, symbols_mapset, number_string}
             else
+              number_strings_map = Map.put(number_strings_map, number_string, {x_index, y_index})
+              number_string = ""
               {number_strings_map, symbols_mapset, number_string}
             end
           else
@@ -47,7 +47,6 @@ defmodule Day03 do
       {Map.merge(acc_map, number_strings_map), MapSet.union(acc_map_set, symbols_mapset)}
     end)
     |> find_valid_part_numbers()
-    |> Map.keys()
     |> Enum.map(&String.to_integer/1)
     |> Enum.sum()
   end
@@ -59,6 +58,7 @@ defmodule Day03 do
       |> get_neighbors({x, y})
       |> MapSet.intersection(symbols_mapset) == MapSet.new()
     end)
+    |> Map.keys()
   end
 
   def get_neighbors(part_number, {x, y}) do
