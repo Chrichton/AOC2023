@@ -10,7 +10,14 @@ defmodule Day03 do
     filename
     |> File.read!()
     |> String.split("\n")
-    |> then(fn lines -> Enum.zip(lines, 0..(Enum.count(lines) - 1)) end)
+    |> find_numbers_and_symbols()
+    |> find_valid_part_numbers()
+    |> Enum.map(fn {part_number, _position} -> part_number end)
+    |> Enum.sum()
+  end
+
+  def find_numbers_and_symbols(lines) do
+    Enum.zip(lines, 0..(Enum.count(lines) - 1))
     |> Enum.reduce({[], MapSet.new(), ""}, fn {line, y_index},
                                               {number_strings_pos, symbols_mapset, number_string} ->
       line_chars = String.codepoints(line)
@@ -46,19 +53,16 @@ defmodule Day03 do
         end
       )
     end)
-    |> find_valid_part_numbers()
-    |> Enum.map(&String.to_integer/1)
-    |> Enum.sum()
   end
 
   def find_valid_part_numbers({number_strings_pos, symbols_mapset, _}) do
     number_strings_pos
-    |> Enum.reduce([], fn {number_string, {x, y}}, numbers ->
+    |> Enum.reduce([], fn {number_string, {x, y}}, parts_pos ->
       if number_string
          |> get_neighbors({x, y})
          |> MapSet.intersection(symbols_mapset) == MapSet.new(),
-         do: numbers,
-         else: [number_string | numbers]
+         do: parts_pos,
+         else: [{String.to_integer(number_string), {x, y}} | parts_pos]
     end)
   end
 
@@ -94,4 +98,54 @@ defmodule Day03 do
 
   def zip3([], _, _), do: []
   def zip3([x | xs], [y | ys], [z | zs]), do: [{x, y, z} | zip3(xs, ys, zs)]
+
+  def solve2(filename) do
+    lines =
+      filename
+      |> File.read!()
+      |> String.split("\n")
+
+    parts_pos =
+      lines
+      |> find_numbers_and_symbols()
+      |> then(fn {number_string_pos, _symbols_mapset, _} -> number_string_pos end)
+
+    find_cogs(lines)
+    |> Enum.reduce(0, fn {x, y}, acc ->
+      neighbor_parts =
+        get_neigbor_parts(parts_pos, {x, y})
+
+      if Enum.count(neighbor_parts) == 2,
+        do: acc + multiply(neighbor_parts),
+        else: acc
+    end)
+  end
+
+  def find_cogs(lines) do
+    Enum.zip(lines, 0..(Enum.count(lines) - 1))
+    |> Enum.reduce(MapSet.new(), fn {line, y_index}, acc ->
+      line_chars = String.codepoints(line)
+      x_indexes = 0..(String.length(line) - 1) |> Enum.to_list()
+
+      Enum.zip(line_chars, x_indexes)
+      |> Enum.reduce(acc, fn {char, x_index}, acc ->
+        if char == "*",
+          do: MapSet.put(acc, {x_index, y_index}),
+          else: acc
+      end)
+    end)
+  end
+
+  def get_neigbor_parts(parts_pos, {x, y}) do
+    parts_pos
+    |> Enum.reduce([], fn {part_number, pos}, acc ->
+      if MapSet.member?(get_neighbors(part_number, pos), {x, y}),
+        do: [part_number | acc],
+        else: acc
+    end)
+  end
+
+  def multiply([number_string1, number_string2]) do
+    String.to_integer(number_string1) * String.to_integer(number_string2)
+  end
 end

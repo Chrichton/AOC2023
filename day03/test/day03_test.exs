@@ -12,4 +12,12 @@ defmodule Day03Test do
   test "star1" do
     assert Day03.solve("star") == 539_433
   end
+
+  test "sample1 2nd" do
+    assert Day03.solve2("sample1") == 467_835
+  end
+
+  test "2nd star" do
+    assert Day03.solve2("star") == 75_847_567
+  end
 end
