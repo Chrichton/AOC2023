@@ -1,4 +1,4 @@
-# See AOC2021 day9.ex, day11.ex
+# # See AOC2021 day9.ex, day11.ex
 
 defmodule Day03 do
   def solve(filename) do
@@ -53,14 +53,13 @@ defmodule Day03 do
 
   def find_valid_part_numbers({number_strings_pos, symbols_mapset, _}) do
     number_strings_pos
-    |> Enum.reduce(MapSet.new(), fn {number_string, {x, y}}, numbers ->
+    |> Enum.reduce([], fn {number_string, {x, y}}, numbers ->
       if number_string
          |> get_neighbors({x, y})
          |> MapSet.intersection(symbols_mapset) == MapSet.new(),
          do: numbers,
-         else: MapSet.put(numbers, number_string)
+         else: [number_string | numbers]
     end)
-    |> MapSet.to_list()
   end
 
   def get_neighbors(part_number, {x, y}) do

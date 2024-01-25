@@ -10,7 +10,6 @@ defmodule Day03Test do
   end
 
   test "star1" do
-    # too low
-    assert Day03.solve("star") == 311_336
+    assert Day03.solve("star") == 539_433
   end
 end
