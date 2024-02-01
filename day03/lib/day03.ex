@@ -122,19 +122,30 @@ defmodule Day03 do
   end
 
   def find_cogs(lines) do
-    Enum.zip(lines, 0..(Enum.count(lines) - 1))
-    |> Enum.reduce(MapSet.new(), fn {line, y_index}, acc ->
-      line_chars = String.codepoints(line)
-      x_indexes = 0..(String.length(line) - 1) |> Enum.to_list()
-
-      Enum.zip(line_chars, x_indexes)
-      |> Enum.reduce(acc, fn {char, x_index}, acc ->
-        if char == "*",
-          do: MapSet.put(acc, {x_index, y_index}),
-          else: acc
-      end)
-    end)
+    for {line, y_index} <- Enum.with_index(lines),
+        chars = String.codepoints(line),
+        x_index_max = Enum.count(chars) - 1,
+        {char, x_index} <- Enum.zip(chars, 0..x_index_max),
+        char == "*",
+        reduce: MapSet.new() do
+      acc -> MapSet.put(acc, {x_index, y_index})
+    end
   end
+
+  # def find_cogs(lines) do
+  #   Enum.zip(lines, 0..(Enum.count(lines) - 1))
+  #   |> Enum.reduce(MapSet.new(), fn {line, y_index}, acc ->
+  #     line_chars = String.codepoints(line)
+  #     x_indexes = 0..(String.length(line) - 1) |> Enum.to_list()
+
+  #     Enum.zip(line_chars, x_indexes)
+  #     |> Enum.reduce(acc, fn {char, x_index}, acc ->
+  #       if char == "*",
+  #         do: MapSet.put(acc, {x_index, y_index}),
+  #         else: acc
+  #     end)
+  #   end)
+  # end
 
   def get_neigbor_parts(parts_pos, {x, y}) do
     parts_pos
