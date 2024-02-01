@@ -4,6 +4,9 @@ defmodule Day03 do
   def solve(filename) do
     filename
     |> read_input()
+    |> find_valid_part_numbers()
+    |> Enum.map(fn {part_number, _position} -> part_number end)
+    |> Enum.sum()
   end
 
   def read_input(filename) do
@@ -11,9 +14,6 @@ defmodule Day03 do
     |> File.read!()
     |> String.split("\n")
     |> find_numbers_and_symbols()
-    |> find_valid_part_numbers()
-    |> Enum.map(fn {part_number, _position} -> part_number end)
-    |> Enum.sum()
   end
 
   def find_numbers_and_symbols(lines) do
