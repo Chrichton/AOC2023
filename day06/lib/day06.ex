@@ -1,24 +1,4 @@
 defmodule Day06 do
-  def solve2 do
-    time = 48_989_083
-    max_distance = 390_110_311_121_360
-    half_time = div(time, 2)
-
-    find_winning_distances(half_time..2, time, max_distance)
-
-    # find_winning_distances(half_time..time, time, max_distance)
-  end
-
-  def find_winning_distances(time_range, time, max_distance) do
-    Enum.reduce_while(time_range, [], fn velocity, acc ->
-      distance = distance(velocity, time)
-
-      if distance > max_distance,
-        do: {:cont, [distance | acc]},
-        else: {:halt, acc}
-    end)
-  end
-
   def solve(input) do
     input
     |> read_input()
