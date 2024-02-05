@@ -4,18 +4,18 @@ defmodule Day07 do
     |> String.split("\n")
     |> Enum.map(fn line ->
       String.split(line, " ")
-      [hand_str, bid_str] = String.split(line, " ")
-      {String.codepoints(hand_str), String.to_integer(bid_str)}
+      [cards_str, bid_str] = String.split(line, " ")
+      {String.codepoints(cards_str), String.to_integer(bid_str)}
     end)
   end
 
   def solve(input, star) do
     input
     |> read_input()
-    |> Enum.map(fn {hand, bid} ->
+    |> Enum.map(fn {cards, bid} ->
       {
-        hand,
-        frequencies(hand, star),
+        cards,
+        frequencies(cards, star),
         bid
       }
     end)
