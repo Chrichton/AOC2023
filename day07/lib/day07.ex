@@ -24,7 +24,7 @@ defmodule Day07 do
       }
     end)
     |> sort_games()
-    |> Enum.with_index(fn {_cards_with_count, bid, _sort_number}, index ->
+    |> Enum.with_index(fn {_cards, bid, _sort_number}, index ->
       (index + 1) * bid
     end)
     |> Enum.sum()
@@ -70,6 +70,82 @@ defmodule Day07 do
       [2, 2, 1] -> 3
       [2, 1, 1, 1] -> 2
       [1, 1, 1, 1, 1] -> 1
+    end
+  end
+
+  # ---------------------------------------------------------
+
+  def solve2(input) do
+    input
+    |> read_input()
+    |> Enum.map(fn {hand, bid} ->
+      {
+        hand,
+        frequencies2(hand),
+        bid
+      }
+    end)
+    |> sort_games2()
+    |> Enum.with_index(fn {_cards, bid, _sort_number}, index ->
+      (index + 1) * bid
+    end)
+    |> Enum.sum()
+  end
+
+  def sort_games2(games) do
+    games
+    |> Enum.map(fn {cards, frequencies, bid} ->
+      {cards, bid, sort_number2({cards, frequencies})}
+    end)
+    |> Enum.sort_by(fn {_cards, _bid, sort_number} ->
+      sort_number
+    end)
+  end
+
+  def sort_number2({cards, frequencies}) do
+    initial_sort_number =
+      frequencies
+      |> game_strength()
+      |> Kernel.*(100_000_000_000_000)
+
+    Enum.zip([100_000_000_000, 100_000_000, 1_000_000, 10_000, 100], cards)
+    |> Enum.reduce(initial_sort_number, fn {factor, card}, acc ->
+      Map.get(card_ranks2(), card) * factor + acc
+    end)
+  end
+
+  def card_ranks2 do
+    ranks = %{"A" => 14, "K" => 13, "Q" => 12, "J" => 1, "T" => 10}
+
+    for number <- 2..9,
+        reduce: ranks do
+      acc -> Map.put(acc, Integer.to_string(number), number)
+    end
+  end
+
+  def frequencies2(cards) do
+    joker_count = Enum.count(cards, &(&1 == "J"))
+
+    if joker_count == 5,
+      do: [5],
+      else: calc_frequencies2(cards, joker_count)
+  end
+
+  def calc_frequencies2(cards, joker_count) do
+    sorted_card_counts_without_joker =
+      cards
+      |> Enum.reject(&(&1 == "J"))
+      |> Enum.frequencies()
+      |> Map.to_list()
+      |> Enum.map(fn {_card, count} -> count end)
+      |> Enum.sort(:desc)
+
+    if Enum.count(sorted_card_counts_without_joker) == 1 do
+      [count] = sorted_card_counts_without_joker
+      [count + joker_count]
+    else
+      [max | rest] = sorted_card_counts_without_joker
+      [max + joker_count | rest]
     end
   end
 end
