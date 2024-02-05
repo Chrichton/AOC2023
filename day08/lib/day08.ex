@@ -11,8 +11,8 @@ defmodule Day08 do
 
     left_rights =
       Enum.map(from_tos, fn from_to ->
-        [from | [to]] = String.split(from_to, " = (")
-        [left | [right]] = String.split(to, ", ")
+        [from, to] = String.split(from_to, " = (")
+        [left, right] = String.split(to, ", ")
         right = String.replace(right, ")", "")
         {from, {left, right}}
       end)
