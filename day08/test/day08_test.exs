@@ -11,6 +11,6 @@ defmodule Day08Test do
   end
 
   test "star" do
-    assert Day08.solve("star") == 6
+    assert Day08.solve("star") == 19783
   end
 end
