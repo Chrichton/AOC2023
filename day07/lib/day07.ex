@@ -22,14 +22,14 @@ defmodule Day07 do
   def sort_games(games, star) do
     games
     |> Enum.map(fn {cards, bid} ->
-      {cards, bid, sort_number({cards, frequencies(cards, star)}, star)}
+      {cards, bid, sort_number({cards, frequencies(cards, star), card_ranks(star)})}
     end)
     |> Enum.sort_by(fn {_cards, _bid, sort_number} ->
       sort_number
     end)
   end
 
-  def sort_number({cards, frequencies}, star) do
+  def sort_number({cards, frequencies, card_ranks}) do
     initial_sort_number =
       frequencies
       |> game_strength()
@@ -37,7 +37,7 @@ defmodule Day07 do
 
     Enum.zip([100_000_000_000, 100_000_000, 1_000_000, 10_000, 100], cards)
     |> Enum.reduce(initial_sort_number, fn {factor, card}, acc ->
-      Map.get(card_ranks(star), card) * factor + acc
+      Map.get(card_ranks, card) * factor + acc
     end)
   end
 
