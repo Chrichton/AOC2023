@@ -12,13 +12,6 @@ defmodule Day07 do
   def solve(input, star) do
     input
     |> read_input()
-    |> Enum.map(fn {cards, bid} ->
-      {
-        cards,
-        frequencies(cards, star),
-        bid
-      }
-    end)
     |> sort_games(star)
     |> Enum.with_index(fn {_cards, bid, _sort_number}, index ->
       (index + 1) * bid
@@ -28,8 +21,8 @@ defmodule Day07 do
 
   def sort_games(games, star) do
     games
-    |> Enum.map(fn {cards, frequencies, bid} ->
-      {cards, bid, sort_number({cards, frequencies}, star)}
+    |> Enum.map(fn {cards, bid} ->
+      {cards, bid, sort_number({cards, frequencies(cards, star)}, star)}
     end)
     |> Enum.sort_by(fn {_cards, _bid, sort_number} ->
       sort_number
