@@ -13,7 +13,7 @@ defmodule Day09Test do
     assert Day09.solve2("sample2") == 5
   end
 
-  # test "star2" do
-  #   assert Day09.solve2("star") == 5
-  # end
+  test "star2" do
+    assert Day09.solve2("star") == 905
+  end
 end
