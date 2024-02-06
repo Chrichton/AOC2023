@@ -33,4 +33,22 @@ defmodule Day09 do
       do: Enum.reverse(lines),
       else: add_next_line(lines)
   end
+
+  # ----------------------------------------------------------------------------
+
+  def solve2(input) do
+    input
+    |> read_input()
+    |> Enum.map(fn line -> add_next_line([line]) end)
+    |> Enum.map(fn lines_list ->
+      Enum.map(lines_list, fn lines -> List.first(lines) end)
+      |> Enum.reverse()
+      |> Enum.drop(1)
+      |> Enum.reduce([0], fn left, [last_left | _rest] = acc ->
+        [left - last_left | acc]
+      end)
+      |> List.first()
+    end)
+    |> Enum.sum()
+  end
 end
