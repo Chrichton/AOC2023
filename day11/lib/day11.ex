@@ -11,8 +11,8 @@ defmodule Day11 do
           x_index_max = Enum.count(line) - 1,
           {char, x_index} <- Enum.zip(line, 0..x_index_max),
           char != ".",
-          reduce: MapSet.new() do
-        acc -> MapSet.put(acc, {x_index, y_index})
+          reduce: [] do
+        acc -> [{x_index, y_index} | acc]
       end
 
     max_x_index =
@@ -54,7 +54,6 @@ defmodule Day11 do
     {galaxies, lines} = read_input(input)
 
     galaxies
-    |> MapSet.to_list()
     |> Combination.combine(2)
     |> Enum.map(fn [{x1, y1}, {x2, y2}] ->
       path = Day11.path({x1, y1}, {x2, y2})
