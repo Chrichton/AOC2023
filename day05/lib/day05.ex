@@ -11,7 +11,7 @@ defmodule Day05 do
   end
 
   def parse_maps_strings(maps_strings) do
-    Enum.map(maps_strings, &parse_map/1)
+    Enum.flat_map(maps_strings, &parse_map/1)
   end
 
   def parse_map(map_string) do
@@ -33,26 +33,29 @@ defmodule Day05 do
   def solve(input) do
     {seeds, maps} = read_input(input)
 
-    Enum.map(seeds, fn seed -> find_location(seed, maps) end)
+    seeds
+    |> Enum.map(&find_location(&1, maps))
+    |> Enum.min()
   end
 
   def find_location(src, maps) do
+    IO.inspect(src, label: "seed stated")
+
     maps
     |> Enum.reduce(src, fn ranges, acc ->
-      IO.inspect(ranges, label: "ranges")
-      find_destination(src, ranges, acc)
+      find_destination(acc, ranges)
     end)
   end
 
-  def find_destination(src, ranges, acc) do
+  def find_destination(src, ranges) do
     ranges
-    |> Enum.reduce_while(src, fn {dest_start, src_start, length}, _acc2 ->
+    |> Enum.reduce_while(src, fn [dest_start, src_start, length], _acc2 ->
       src_range = src_start..(src_start + length - 1)
       dest_range = dest_start..(dest_start + length - 1)
 
-      case Enum.find_index(src_range, src) do
+      case Enum.find_index(src_range, &(&1 == src)) do
         nil -> {:cont, src}
-        src_index -> {:halt, [Enum.at(dest_range, src_index) | acc]}
+        src_index -> {:halt, Enum.at(dest_range, src_index)}
       end
     end)
   end
