@@ -39,8 +39,6 @@ defmodule Day05 do
   end
 
   def find_location(src, maps) do
-    IO.inspect(src, label: "seed stated")
-
     maps
     |> Enum.reduce(src, fn ranges, acc ->
       find_destination(acc, ranges)
@@ -50,13 +48,25 @@ defmodule Day05 do
   def find_destination(src, ranges) do
     ranges
     |> Enum.reduce_while(src, fn [dest_start, src_start, length], _acc2 ->
-      src_range = src_start..(src_start + length - 1)
-      dest_range = dest_start..(dest_start + length - 1)
-
-      case Enum.find_index(src_range, &(&1 == src)) do
+      case find_dest(src, dest_start, src_start, length) do
         nil -> {:cont, src}
-        src_index -> {:halt, Enum.at(dest_range, src_index)}
+        dest -> {:halt, dest}
       end
     end)
   end
+
+  def find_dest(src, dest_start, src_start, lenght) do
+    if in_range?(src, src_start, lenght) do
+      dest = src - src_start + dest_start
+
+      if in_range?(dest, dest_start, lenght),
+        do: dest,
+        else: nil
+    else
+      nil
+    end
+  end
+
+  def in_range?(value, range_start, lenght),
+    do: value >= range_start and value <= range_start + lenght - 1
 end
