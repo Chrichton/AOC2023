@@ -41,21 +41,21 @@ defmodule Day05 do
   def find_location(src, maps) do
     maps
     |> Enum.reduce(src, fn ranges, acc ->
-      find_destination(acc, ranges)
+      find_first_destination(acc, ranges)
     end)
   end
 
-  def find_destination(src, ranges) do
+  def find_first_destination(src, ranges) do
     ranges
     |> Enum.reduce_while(src, fn [dest_start, src_start, length], _acc2 ->
-      case find_dest(src, dest_start, src_start, length) do
+      case find_destination(src, dest_start, src_start, length) do
         nil -> {:cont, src}
         dest -> {:halt, dest}
       end
     end)
   end
 
-  def find_dest(src, dest_start, src_start, lenght) do
+  def find_destination(src, dest_start, src_start, lenght) do
     dest = src - src_start + dest_start
 
     if in_range?(src, src_start, lenght) and

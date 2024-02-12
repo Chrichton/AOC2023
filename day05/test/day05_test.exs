@@ -17,8 +17,8 @@ defmodule Day05Test do
              }
   end
 
-  test "find_dest1" do
-    assert Day05.find_dest(79, 52, 50, 48) == 81
+  test "find_destination" do
+    assert Day05.find_destination(79, 52, 50, 48) == 81
   end
 
   test "sample1" do
