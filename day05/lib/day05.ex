@@ -56,15 +56,12 @@ defmodule Day05 do
   end
 
   def find_dest(src, dest_start, src_start, lenght) do
-    if in_range?(src, src_start, lenght) do
-      dest = src - src_start + dest_start
+    dest = src - src_start + dest_start
 
-      if in_range?(dest, dest_start, lenght),
-        do: dest,
-        else: nil
-    else
-      nil
-    end
+    if in_range?(src, src_start, lenght) and
+         in_range?(dest, dest_start, lenght),
+       do: dest,
+       else: nil
   end
 
   def in_range?(value, range_start, lenght),
