@@ -7,7 +7,7 @@ defmodule Day10 do
     lines = String.split(input, "\n")
     y_range = 0..(Enum.count(lines) - 1)
 
-    locations_pipes_map =
+    locations_map =
       for {y_index, line} <- Enum.zip(y_range, lines),
           chars = String.codepoints(line),
           {x_index, char} <- Enum.zip(0..(Enum.count(chars) - 1), chars),
@@ -17,9 +17,13 @@ defmodule Day10 do
       end
 
     [start_position] =
-      locations_pipes_map
+      locations_map
       |> Map.filter(fn {_coord, char} -> char == "S" end)
       |> Map.keys()
+
+    locations_pipes_map =
+      locations_map
+      |> Map.reject(fn {_coord, char} -> char == "S" end)
 
     {start_position, locations_pipes_map}
   end
@@ -39,21 +43,66 @@ defmodule Day10 do
   def solve(input) do
     input
     |> read_input()
-    |> steps()
+    |> then(fn {start_coord, pipes} ->
+      start_coord = {2, 1}
+      steps(start_coord, pipes, start_coord, 0)
+    end)
   end
 
-  def steps({start_coord, pipes}) do
-    neighbor_pipes(start_coord, pipes)
+  def steps(start_coord, _pipes, end_coord, count)
+      when start_coord == end_coord and count > 0,
+      do: count
+
+  def steps(start_coord, pipes, end_coord, count) do
+    next_coord =
+      next_direction(start_coord, pipes)
+      |> direction_to_coord(start_coord)
+      |> IO.inspect(label: "next_coord")
+
+    steps(next_coord, pipes, end_coord, count + 1)
   end
 
-  def neighbor_pipes(coord, pipes) do
+  def next_direction(coord, pipes) do
     neighbors(coord)
-    |> Enum.map(&Map.get(pipes, &1))
-    |> Enum.reject(&(&1 == nil))
+    |> Enum.reduce_while(:none, fn neighbor_coord, acc ->
+      case Map.fetch(pipes, neighbor_coord) do
+        :error ->
+          {:cont, acc}
+
+        {:ok, [direction1, direction2]} ->
+          direction_from = direction_from(coord, neighbor_coord)
+
+          if direction_from == direction1,
+            do: {:halt, direction2},
+            else:
+              if(direction_from == direction2,
+                do: {:halt, direction1},
+                else: {:cont, acc}
+              )
+      end
+    end)
   end
 
   def neighbors({x, y}) do
     [{x - 1, y}, {x + 1, y}, {x, y + 1}, {x, y - 1}]
     |> Enum.reject(fn {x, y} -> x < 0 or y < 0 end)
+  end
+
+  def direction_from({x_from, y_from}, {x_to, y_to}) do
+    cond do
+      x_from < x_to -> :west
+      x_from > x_to -> :east
+      y_from < y_to -> :north
+      y_from > y_to -> :south
+    end
+  end
+
+  def direction_to_coord(direction, {from_x, from_y}) do
+    cond do
+      direction == :north -> {from_x, from_y - 1}
+      direction == :south -> {from_x, from_y + 1}
+      direction == :west -> {from_x - 1, from_y}
+      direction == :east -> {from_x + 1, from_y}
+    end
   end
 end
