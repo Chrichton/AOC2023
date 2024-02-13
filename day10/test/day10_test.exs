@@ -3,15 +3,22 @@ defmodule Day10Test do
 
   test "read_input" do
     assert Day10.read_input("sample") ==
-             {{1, 1},
-              %{
-                {1, 2} => "|",
-                {1, 3} => "L",
-                {2, 1} => "-",
-                {2, 3} => "-",
-                {3, 1} => "7",
-                {3, 2} => "|",
-                {3, 3} => "J"
-              }}
+             {
+               {1, 1},
+               %{
+                 {1, 2} => [:north, :south],
+                 {1, 3} => [:north, :east],
+                 {2, 1} => [:east, :west],
+                 {2, 3} => [:east, :west],
+                 {3, 1} => [:south, :west],
+                 {3, 2} => [:north, :south],
+                 {3, 3} => [:north, :west],
+                 {1, 1} => "S"
+               }
+             }
+  end
+
+  test "sample" do
+    assert Day10.solve("sample") == nil
   end
 end
