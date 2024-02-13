@@ -66,4 +66,37 @@ defmodule Day05 do
 
   def in_range?(value, range_start, lenght),
     do: value >= range_start and value <= range_start + lenght - 1
+
+  # ----------------------------------------------------------------
+
+  def read_input2(input) do
+    input = File.read!(input)
+
+    [seeds | rest] = String.split(input, "\n\n")
+    [_, seeds] = String.split(seeds, ": ")
+
+    seeds =
+      seeds
+      |> parse_numbers_string()
+      |> Enum.chunk_every(2)
+      |> Enum.flat_map(fn [start, lenght] ->
+        start..(lenght - 1)
+      end)
+
+    maps = parse_maps_strings(rest)
+
+    {seeds, maps}
+  end
+
+  def solve2(input) do
+    IO.puts("start")
+
+    {seeds, maps} = read_input2(input)
+
+    IO.puts("seeds: #{Enum.count(seeds)}")
+
+    seeds
+    |> Enum.map(&find_location(&1, maps))
+    |> Enum.min()
+  end
 end
