@@ -58,7 +58,7 @@ defmodule Day11 do
     |> Enum.map(fn [{x1, y1}, {x2, y2}] ->
       path = Day11.path({x1, y1}, {x2, y2})
       line_hits = MapSet.intersection(path, lines)
-      Enum.count(path) + Enum.count(line_hits) * 1
+      Enum.count(path) + Enum.count(line_hits) * 10
     end)
     |> Enum.sum()
   end
