@@ -44,7 +44,7 @@ defmodule Day10 do
     input
     |> read_input()
     |> then(fn {start_coord, pipes} ->
-      start_coord = {2, 1}
+      start_coord = {3, 1}
       steps(start_coord, pipes, start_coord, 0)
     end)
   end
@@ -55,14 +55,13 @@ defmodule Day10 do
 
   def steps(start_coord, pipes, end_coord, count) do
     next_coord =
-      next_direction(start_coord, pipes)
-      |> direction_to_coord(start_coord)
+      next_coord(start_coord, pipes)
       |> IO.inspect(label: "next_coord")
 
-    steps(next_coord, pipes, end_coord, count + 1)
+    # steps(next_coord, pipes, end_coord, count + 1)
   end
 
-  def next_direction(coord, pipes) do
+  def next_coord(coord, pipes) do
     neighbors(coord)
     |> Enum.reduce_while(:none, fn neighbor_coord, acc ->
       case Map.fetch(pipes, neighbor_coord) do
@@ -72,13 +71,9 @@ defmodule Day10 do
         {:ok, [direction1, direction2]} ->
           direction_from = direction_from(coord, neighbor_coord)
 
-          if direction_from == direction1,
-            do: {:halt, direction2},
-            else:
-              if(direction_from == direction2,
-                do: {:halt, direction1},
-                else: {:cont, acc}
-              )
+          if direction_from == direction1 or direction_from == direction2,
+            do: {:halt, neighbor_coord},
+            else: {:cont, acc}
       end
     end)
   end
