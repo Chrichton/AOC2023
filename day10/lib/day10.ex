@@ -7,7 +7,7 @@ defmodule Day10 do
     lines = String.split(input, "\n")
     y_range = 0..(Enum.count(lines) - 1)
 
-    locations_map =
+    locations_pipes_map =
       for {y_index, line} <- Enum.zip(y_range, lines),
           chars = String.codepoints(line),
           {x_index, char} <- Enum.zip(0..(Enum.count(chars) - 1), chars),
@@ -17,13 +17,9 @@ defmodule Day10 do
       end
 
     [start_position] =
-      locations_map
+      locations_pipes_map
       |> Map.filter(fn {_coord, char} -> char == "S" end)
       |> Map.keys()
-
-    locations_pipes_map =
-      locations_map
-      |> Map.reject(fn {_coord, char} -> char == "S" end)
 
     {start_position, locations_pipes_map}
   end
@@ -50,15 +46,13 @@ defmodule Day10 do
 
   def steps(direction_from, start_coord, _pipes, end_coord, count)
       when start_coord == end_coord and direction_from != nil,
-      do: count
+      do: div(count, 2)
 
   def steps(direction_from, coord, pipes, end_coord, count) do
     {direction, next_coord} =
       if direction_from == nil,
-        do: next_coord(coord, pipes) |> IO.inspect(label: "start_coord"),
-        else:
-          next_coord(coord, direction_from, pipes)
-          |> IO.inspect(label: "coord")
+        do: next_coord(coord, pipes),
+        else: next_coord(coord, direction_from, pipes)
 
     steps(direction, next_coord, pipes, end_coord, count + 1)
   end
