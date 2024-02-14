@@ -19,6 +19,6 @@ defmodule Day10Test do
   # end
 
   test "sample" do
-    assert Day10.solve("sample") == nil
+    assert Day10.solve("sample") == 8
   end
 end

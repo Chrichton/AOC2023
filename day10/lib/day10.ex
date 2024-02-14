@@ -44,21 +44,23 @@ defmodule Day10 do
     input
     |> read_input()
     |> then(fn {start_coord, pipes} ->
-      start_coord = {3, 1}
-      steps(start_coord, pipes, start_coord, 0)
+      steps(nil, start_coord, pipes, start_coord, 0)
     end)
   end
 
-  def steps(start_coord, _pipes, end_coord, count)
-      when start_coord == end_coord and count > 0,
+  def steps(direction_from, start_coord, _pipes, end_coord, count)
+      when start_coord == end_coord and direction_from != nil,
       do: count
 
-  def steps(start_coord, pipes, end_coord, count) do
-    next_coord =
-      next_coord(start_coord, pipes)
-      |> IO.inspect(label: "next_coord")
+  def steps(direction_from, coord, pipes, end_coord, count) do
+    {direction, next_coord} =
+      if direction_from == nil,
+        do: next_coord(coord, pipes) |> IO.inspect(label: "start_coord"),
+        else:
+          next_coord(coord, direction_from, pipes)
+          |> IO.inspect(label: "coord")
 
-    # steps(next_coord, pipes, end_coord, count + 1)
+    steps(direction, next_coord, pipes, end_coord, count + 1)
   end
 
   def next_coord(coord, pipes) do
@@ -72,10 +74,18 @@ defmodule Day10 do
           direction_from = direction_from(coord, neighbor_coord)
 
           if direction_from == direction1 or direction_from == direction2,
-            do: {:halt, neighbor_coord},
+            do: {:halt, {direction_from, neighbor_coord}},
             else: {:cont, acc}
       end
     end)
+  end
+
+  def next_coord(coord, direction_from, pipes) do
+    [direction1, direction2] = Map.get(pipes, coord)
+
+    if direction_from == direction1,
+      do: {opposite_direction(direction2), direction_to_coord(direction2, coord)},
+      else: {opposite_direction(direction1), direction_to_coord(direction1, coord)}
   end
 
   def neighbors({x, y}) do
@@ -98,6 +108,15 @@ defmodule Day10 do
       direction == :south -> {from_x, from_y + 1}
       direction == :west -> {from_x - 1, from_y}
       direction == :east -> {from_x + 1, from_y}
+    end
+  end
+
+  def opposite_direction(direction) do
+    cond do
+      direction == :north -> :south
+      direction == :south -> :north
+      direction == :west -> :east
+      direction == :east -> :west
     end
   end
 end
