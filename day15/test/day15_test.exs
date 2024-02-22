@@ -18,6 +18,6 @@ defmodule Day15Test do
   end
 
   test "star2" do
-    assert Day15.solve2("star") == 145
+    assert Day15.solve2("star") == 258_826
   end
 end

@@ -61,18 +61,32 @@ defmodule Day15 do
   end
 
   def remove_lens(lens_label, box_no, boxes_map) do
-    Map.update!(boxes_map, box_no, fn lenses ->
-      List.keydelete(lenses, lens_label, 0)
+    Map.update(boxes_map, box_no, [{lens_label, -1}], fn lenses ->
+      if List.keyfind(lenses, lens_label, 0),
+        do: List.keydelete(lenses, lens_label, 0),
+        else: lenses
     end)
   end
 
   def box_no(step), do: step |> label() |> hash()
-  def label(string), do: String.slice(string, 0, 2)
-  def operation(string), do: String.at(string, 2)
 
-  def focal_lenghts(string),
-    do:
-      string
-      |> String.at(3)
-      |> String.to_integer()
+  def label(string) do
+    string
+    |> String.split(operation(string))
+    |> hd()
+  end
+
+  def operation(string) do
+    if String.contains?(string, "="),
+      do: "=",
+      else: "-"
+  end
+
+  def focal_lenghts(string) do
+    {index, _length} = :binary.match(string, "=")
+
+    string
+    |> String.at(index + 1)
+    |> String.to_integer()
+  end
 end
