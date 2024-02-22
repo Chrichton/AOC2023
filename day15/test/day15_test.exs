@@ -12,4 +12,12 @@ defmodule Day15Test do
   test "star" do
     assert Day15.solve("star") == 513_214
   end
+
+  test "sample2" do
+    assert Day15.solve2("sample") == 145
+  end
+
+  test "star2" do
+    assert Day15.solve2("star") == 145
+  end
 end
