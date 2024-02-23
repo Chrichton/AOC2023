@@ -6,22 +6,22 @@ defmodule Day21 do
     |> lines_to_map()
   end
 
-  def solve(input) do
+  def solve(input, max_steps) do
     input
     |> read_input()
-    |> process_steps()
+    |> process_steps(max_steps)
   end
 
-  def process_steps(point_char_map) do
+  def process_steps(point_char_map, max_steps) do
     start = find_startpoint(point_char_map)
 
-    next_step(MapSet.new([start]), point_char_map, 0)
+    next_step(MapSet.new([start]), point_char_map, 0, max_steps)
   end
 
-  def next_step(last_points, _point_char_map, steps) when steps == 64,
+  def next_step(last_points, _point_char_map, steps, max_steps) when steps == max_steps,
     do: Enum.count(last_points)
 
-  def next_step(last_points, point_char_map, steps) do
+  def next_step(last_points, point_char_map, steps, max_steps) do
     new_points =
       Enum.reduce(last_points, MapSet.new(), fn point, acc ->
         point
@@ -33,7 +33,8 @@ defmodule Day21 do
     next_step(
       new_points,
       point_char_map,
-      steps + 1
+      steps + 1,
+      max_steps
     )
   end
 
