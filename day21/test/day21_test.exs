@@ -130,4 +130,8 @@ defmodule Day21Test do
   test "sample" do
     assert Day21.solve("sample") == 16
   end
+
+  test "star" do
+    assert Day21.solve("star") == 3853
+  end
 end

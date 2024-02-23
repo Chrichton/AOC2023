@@ -18,7 +18,7 @@ defmodule Day21 do
     next_step(MapSet.new([start]), point_char_map, 0)
   end
 
-  def next_step(last_points, _point_char_map, steps) when steps == 6,
+  def next_step(last_points, _point_char_map, steps) when steps == 64,
     do: Enum.count(last_points)
 
   def next_step(last_points, point_char_map, steps) do
