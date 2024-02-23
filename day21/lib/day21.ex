@@ -15,30 +15,23 @@ defmodule Day21 do
   def process_steps(point_char_map) do
     start = find_startpoint(point_char_map)
 
-    next_step(MapSet.new([start]), MapSet.new(), point_char_map, 1)
+    next_step(MapSet.new([start]), point_char_map, 0)
   end
 
-  def next_step(last_points, visited, _point_char_map, steps) when steps == 3,
-    do: MapSet.union(last_points, visited)
+  def next_step(last_points, _point_char_map, steps) when steps == 6,
+    do: Enum.count(last_points)
 
-  def next_step(last_points, visited, point_char_map, steps) do
+  def next_step(last_points, point_char_map, steps) do
     new_points =
       Enum.reduce(last_points, MapSet.new(), fn point, acc ->
-        neighbors =
-          point
-          |> neighbors()
-          |> MapSet.filter(&(Map.get(point_char_map, &1) == "."))
-
-        # |> MapSet.union(acc)
-
-        # |> MapSet.difference(visited)
-        # |> MapSet.difference(acc)
+        point
+        |> neighbors()
+        |> MapSet.reject(&(Map.get(point_char_map, &1) == "#"))
+        |> MapSet.union(acc)
       end)
-      |> IO.inspect(label: "new pointa")
 
     next_step(
       new_points,
-      MapSet.union(last_points, new_points),
       point_char_map,
       steps + 1
     )

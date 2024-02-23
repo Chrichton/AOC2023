@@ -128,6 +128,6 @@ defmodule Day21Test do
   end
 
   test "sample" do
-    assert Day21.solve("sample") == nil
+    assert Day21.solve("sample") == 16
   end
 end
