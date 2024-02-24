@@ -10,8 +10,8 @@ defmodule Day14 do
     input
     |> read_input()
     |> rotate_right()
-    |> Enum.map(&move_os_right/1)
-    |> Enum.map(&calc_load/1)
+    |> Stream.map(&move_os_right/1)
+    |> Stream.map(&calc_load/1)
     |> Enum.sum()
   end
 
