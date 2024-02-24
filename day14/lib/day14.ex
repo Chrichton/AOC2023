@@ -42,4 +42,23 @@ defmodule Day14 do
       |> Enum.reverse()
     end)
   end
+
+  def solve2(input) do
+    input
+    |> read_input()
+    |> cycles(0, 1_000_000_000)
+  end
+
+  def cycles(rows, cycle, max_cycles) when cycle == max_cycles * 4 do
+    rows
+    |> Enum.map(&calc_load/1)
+    |> Enum.sum()
+  end
+
+  def cycles(rows, cycle, max_cycles) do
+    rows
+    |> rotate_right()
+    |> Enum.map(&move_os_right/1)
+    |> cycles(cycle + 1, max_cycles)
+  end
 end
