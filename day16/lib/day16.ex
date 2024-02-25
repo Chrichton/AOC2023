@@ -8,9 +8,7 @@ defmodule Day16 do
 
   def find_mirrors(lines) do
     for {line, y_index} <- Enum.with_index(lines),
-        chars = String.codepoints(line),
-        x_index_max = Enum.count(chars) - 1,
-        {char, x_index} <- Enum.zip(chars, 0..x_index_max),
+        {char, x_index} <- Enum.with_index(String.codepoints(line)),
         char != ".",
         into: %{},
         do: {{x_index, y_index}, char}
