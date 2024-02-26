@@ -22,9 +22,6 @@ defmodule Day16 do
   end
 
   def next_step({mirrors, {max_x, max_y}}, rays, visited, _rays_count) do
-    IO.inspect(rays, label: "rays")
-    IO.inspect(visited, label: "visited")
-
     rays
     |> Enum.reduce(
       {MapSet.new(), visited},

@@ -61,4 +61,8 @@ defmodule Day16Test do
   test "sample" do
     assert Day16.solve("sample") == 46
   end
+
+  test "star" do
+    assert Day16.solve("star") == 8323
+  end
 end
