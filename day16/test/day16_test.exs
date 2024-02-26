@@ -29,4 +29,28 @@ defmodule Day16Test do
              {9, 8} => "\\"
            }
   end
+
+  test "next_rays ." do
+    assert Day16.next_rays({{0, 0}, :east}, Map.new()) == [{{1, 0}, :east}]
+  end
+
+  test "next_rays |" do
+    assert Day16.next_rays({{1, 0}, :east}, Map.new([{{1, 0}, "|"}])) ==
+             [{{1, 1}, :south}]
+  end
+
+  test "next_rays -" do
+    assert Day16.next_rays({{1, 0}, :east}, Map.new([{{1, 0}, "-"}])) ==
+             [{{2, 0}, :east}]
+  end
+
+  test "next_rays \\" do
+    assert Day16.next_rays({{1, 0}, :east}, Map.new([{{1, 0}, "\\"}])) ==
+             [{{1, 1}, :south}]
+  end
+
+  test "next_rays /" do
+    assert Day16.next_rays({{1, 0}, :west}, Map.new([{{1, 0}, "/"}])) ==
+             [{{1, 1}, :south}]
+  end
 end
