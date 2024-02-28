@@ -18,7 +18,7 @@ defmodule Day16 do
     visited
     |> Enum.map(fn {position, _direction} -> position end)
     |> MapSet.new()
-    |> Enum.count()
+    |> MapSet.size()
   end
 
   def next_step({mirrors, {max_x, max_y}}, rays, visited, _rays_count) do
