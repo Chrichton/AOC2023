@@ -123,4 +123,24 @@ defmodule Day16 do
 
     {max_x, max_y}
   end
+
+  def solve2(input) do
+    input
+    |> read_input()
+    |> max_energized()
+  end
+
+  def max_energized({mirrors, {max_x, max_y}}) do
+    for x <- 0..(max_x - 1),
+        y <- 0..(max_y - 1),
+        direction <- [:north, :east, :south, :west] do
+      next_step(
+        {mirrors, {max_x, max_y}},
+        MapSet.new([{{x, y}, direction}]),
+        MapSet.new([{{0, 0}, :direction}]),
+        1
+      )
+    end
+    |> Enum.max()
+  end
 end
