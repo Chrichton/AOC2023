@@ -69,4 +69,10 @@ defmodule Day16Test do
   test "sample2" do
     assert Day16.solve2("sample") == 51
   end
+
+  # 8536 too high
+  @tag timeout: :infinity
+  test "star2" do
+    assert Day16.solve2("star") == 51
+  end
 end

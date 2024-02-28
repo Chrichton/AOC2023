@@ -137,7 +137,7 @@ defmodule Day16 do
       next_step(
         {mirrors, {max_x, max_y}},
         MapSet.new([{{x, y}, direction}]),
-        MapSet.new([{{0, 0}, :direction}]),
+        MapSet.new([{{x, y}, :direction}]),
         1
       )
     end
