@@ -1,6 +1,5 @@
 defmodule Day16Test do
   use ExUnit.Case
-  doctest Day16
 
   test "read_input" do
     assert Day16.read_input("sample") ==
@@ -66,14 +65,11 @@ defmodule Day16Test do
     assert Day16.solve("star") == 8323
   end
 
-  # {51, {{3, 1}, :south}}
   test "sample2" do
     assert Day16.solve2("sample") == 51
   end
 
-  # 8536 too high, {8536, {{76, 92}, :east}}
-  @tag timeout: :infinity
   test "star2" do
-    assert Day16.solve2("sample") == 51
+    assert Day16.solve2("star") == 8491
   end
 end

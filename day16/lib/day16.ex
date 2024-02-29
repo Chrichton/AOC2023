@@ -131,16 +131,33 @@ defmodule Day16 do
   end
 
   def max_energized({mirrors, {max_x, max_y}}) do
-    for x <- 0..(max_x - 1),
-        y <- 0..(max_y - 1),
-        direction <- [:north, :east, :south, :west] do
-      next_step(
-        {mirrors, {max_x, max_y}},
-        MapSet.new([{{x, y}, direction}]),
-        MapSet.new([{{x, y}, :direction}]),
-        1
-      )
-    end
+    horizontal_rays =
+      for y <- 0..(max_y - 1), reduce: [] do
+        acc ->
+          acc = [{{0, y}, :east} | acc]
+          [{{max_y - 1, y}, :west} | acc]
+      end
+
+    vertical_rays =
+      for x <- 0..(max_x - 1), reduce: [] do
+        acc ->
+          acc = [{{x, 0}, :south} | acc]
+          [{{x, max_x - 1}, :north} | acc]
+      end
+
+    (horizontal_rays ++ vertical_rays)
+    |> Task.async_stream(
+      fn {{x, y}, direction} ->
+        next_step(
+          {mirrors, {max_x, max_y}},
+          MapSet.new([{{x, y}, direction}]),
+          MapSet.new([{{x, y}, :direction}]),
+          1
+        )
+      end,
+      ordered: false
+    )
+    |> Stream.map(fn {:ok, num} -> num end)
     |> Enum.max()
   end
 end
