@@ -35,7 +35,7 @@ defmodule Day14 do
   # transpose - reverse
   def rotate_right(rows) do
     rows
-    |> List.zip()
+    |> Enum.zip()
     |> Enum.map(fn line ->
       line
       |> Tuple.to_list()
@@ -43,10 +43,10 @@ defmodule Day14 do
     end)
   end
 
-  def solve2(input) do
+  def solve2(input, max_cycles) do
     input
     |> read_input()
-    |> cycles(0, 1_000_000_000)
+    |> cycles(0, max_cycles)
   end
 
   def cycles(rows, cycle, max_cycles) when cycle == max_cycles * 4 do
@@ -60,5 +60,30 @@ defmodule Day14 do
     |> rotate_right()
     |> Enum.map(&move_os_right/1)
     |> cycles(cycle + 1, max_cycles)
+  end
+
+  @cycle_from_80 [
+    98593,
+    98607,
+    98630,
+    98653,
+    98655,
+    98646,
+    98633,
+    98612,
+    98590,
+    98576,
+    98565,
+    98562,
+    98574,
+    98587,
+    98595,
+    98593,
+    98585
+  ]
+
+  def calc_load_from_80_cycles_on(cycles) do
+    index = rem(cycles - 80, Enum.count(@cycle_from_80))
+    Enum.at(@cycle_from_80, index)
   end
 end

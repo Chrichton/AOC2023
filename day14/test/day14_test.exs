@@ -59,8 +59,24 @@ defmodule Day14Test do
     assert Day14.solve("star") == 109_098
   end
 
-  @tag timeout: :infinity
+  test "sample2" do
+    assert Day14.solve2("sample", 3) == 121
+  end
+
+  # repeating_cycle(starts(for 80))
+  test "find_repeating_cycle" do
+    for max_cycle <- 80..150 do
+      result = Day14.solve2("star", max_cycle)
+      IO.puts("#{max_cycle}: #{result}")
+    end
+  end
+
+  test "calc_load_from_80_cycles_on" do
+    assert Day14.calc_load_from_80_cycles_on(81) == 98607
+  end
+
+  # 98574, 98595 too low
   test "star2" do
-    assert Day14.solve2("star") == nil
+    assert Day14.calc_load_from_80_cycles_on(1_000_000_000) == 98595
   end
 end
