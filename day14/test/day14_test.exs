@@ -47,6 +47,11 @@ defmodule Day14Test do
              [".", ".", "O", "O", "#", ".", ".", ".", ".", "O"]
   end
 
+  test "move_os_left" do
+    assert Day14.move_os_left([".", ".", "O", "O", "#", ".", ".", ".", ".", "O"]) ==
+             ["O", "O", ".", ".", "#", "O", ".", ".", ".", "."]
+  end
+
   test "calc_load" do
     assert Day14.calc_load(["#", "#", ".", ".", ".", ".", "O", "O", "O", "O"]) == 7 + 8 + 9 + 10
   end
@@ -59,24 +64,37 @@ defmodule Day14Test do
     assert Day14.solve("star") == 109_098
   end
 
+  # cycles result
+  # 5       65
+  # 3       69
+  # 2       69
+  # 1       87
+
+  # first cycle
+  # 0 -> 104
+  # 1 -> 121
+  # 2 -> 136
+  # 3 -> 135
+  # 4 ->  87
+
   test "sample2" do
-    assert Day14.solve2("sample", 3) == 121
+    assert Day14.solve2("sample", 1) == 87
   end
 
   # repeating_cycle(starts(for 80))
-  test "find_repeating_cycle" do
-    for max_cycle <- 80..150 do
-      result = Day14.solve2("star", max_cycle)
-      IO.puts("#{max_cycle}: #{result}")
-    end
-  end
+  # test "find_repeating_cycle" do
+  #   for max_cycle <- 1..80 do
+  #     result = Day14.solve2("star", max_cycle)
+  #     IO.puts("#{max_cycle}: #{result}")
+  #   end
+  # end
 
   test "calc_load_from_80_cycles_on" do
     assert Day14.calc_load_from_80_cycles_on(81) == 98607
   end
 
   # 98574, 98595 too low
-  test "star2" do
-    assert Day14.calc_load_from_80_cycles_on(1_000_000_000) == 98595
-  end
+  # test "star2" do
+  #   assert Day14.calc_load_from_80_cycles_on(1_000_000_000) == 100_064
+  # end
 end

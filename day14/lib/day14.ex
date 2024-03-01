@@ -22,6 +22,15 @@ defmodule Day14 do
     |> List.flatten()
   end
 
+  def move_os_left(line) do
+    line
+    |> Enum.reverse()
+    |> Enum.chunk_by(&(&1 == "#"))
+    |> Enum.map(&Enum.sort/1)
+    |> List.flatten()
+    |> Enum.reverse()
+  end
+
   def calc_load(line) do
     line
     |> Enum.zip(1..Enum.count(line))
@@ -49,8 +58,9 @@ defmodule Day14 do
     |> cycles(0, max_cycles)
   end
 
-  def cycles(rows, cycle, max_cycles) when cycle == max_cycles * 4 do
+  def cycles(rows, cycle, max_cycles) when cycle == max_cycles do
     rows
+    |> rotate_right()
     |> Enum.map(&calc_load/1)
     |> Enum.sum()
   end
@@ -59,6 +69,13 @@ defmodule Day14 do
     rows
     |> rotate_right()
     |> Enum.map(&move_os_right/1)
+    |> rotate_right()
+    |> Enum.map(&move_os_right/1)
+    |> rotate_right()
+    |> Enum.map(&move_os_right/1)
+    |> rotate_right()
+    |> Enum.map(&move_os_right/1)
+    |> IO.inspect()
     |> cycles(cycle + 1, max_cycles)
   end
 
