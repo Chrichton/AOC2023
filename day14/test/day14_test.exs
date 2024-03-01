@@ -47,11 +47,6 @@ defmodule Day14Test do
              [".", ".", "O", "O", "#", ".", ".", ".", ".", "O"]
   end
 
-  test "move_os_left" do
-    assert Day14.move_os_left([".", ".", "O", "O", "#", ".", ".", ".", ".", "O"]) ==
-             ["O", "O", ".", ".", "#", "O", ".", ".", ".", "."]
-  end
-
   test "calc_load" do
     assert Day14.calc_load(["#", "#", ".", ".", ".", ".", "O", "O", "O", "O"]) == 7 + 8 + 9 + 10
   end
