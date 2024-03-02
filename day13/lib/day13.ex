@@ -1,40 +1,50 @@
 defmodule Day13 do
   def read_input(input) do
-    [vertical, horizontal] =
-      input
-      |> File.read!()
-      |> String.split("\n\n")
-
-    vertical =
-      vertical
-      |> String.split("\n")
-      |> Enum.map(&String.codepoints/1)
-
-    horizontal =
-      horizontal
-      |> String.split("\n")
-      |> Enum.map(&String.codepoints/1)
-
-    {vertical, horizontal}
+    # [{vertical, horizontal}] =
+    input
+    |> File.read!()
+    |> String.split("\n\n")
+    |> Enum.chunk_every(2)
+    |> Enum.map(fn [vertical, horizontal] ->
+      {
+        vertical
+        |> String.split("\n", trim: true)
+        |> Enum.map(&String.codepoints/1),
+        horizontal
+        |> String.split("\n", trim: true)
+        |> Enum.map(&String.codepoints/1)
+      }
+    end)
   end
 
   def solve(input) do
     input
     |> read_input()
-    |> process_pairs()
+    |> Enum.map(&process_pairs/1)
+    |> Enum.sum()
   end
 
   def process_pairs({vertical_grid, horizontal_grid}) do
-    [horizontal_line] =
+    horizontal_line =
       horizontal_grid
       |> perfect_reflections()
 
-    [vertical_line] =
+    vertical_line =
       vertical_grid
       |> transpose()
       |> perfect_reflections()
 
-    horizontal_line * 100 + vertical_line
+    horizontal_value =
+      if horizontal_line == [],
+        do: 0,
+        else: hd(horizontal_line)
+
+    vertical_value =
+      if vertical_line == [],
+        do: 0,
+        else: hd(vertical_line)
+
+    horizontal_value * 100 + vertical_value
   end
 
   def perfect_reflections(grid) do
