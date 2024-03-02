@@ -1,19 +1,36 @@
 defmodule Day13 do
   def read_input(input) do
-    input
-    |> File.read!()
-    |> String.split("\n")
+    [vertical, horizontal] =
+      input
+      |> File.read!()
+      |> String.split("\n\n")
+
+    vertical =
+      vertical
+      |> String.split("\n")
+      |> Enum.map(&String.codepoints/1)
+
+    horizontal =
+      horizontal
+      |> String.split("\n")
+      |> Enum.map(&String.codepoints/1)
+
+    {vertical, horizontal}
   end
 
   def solve(input) do
-    grid = read_input(input)
+    {vertical_grid, horizontal_grid} = read_input(input)
 
-    _horizontal_lines = perfect_reflections(grid)
+    [horizontal_line] =
+      horizontal_grid
+      |> perfect_reflections()
 
-    # vertical_lines =
-    #   grid
-    #   |> transpose()
-    #   |> perfect_reflections()
+    [vertical_line] =
+      vertical_grid
+      |> transpose()
+      |> perfect_reflections()
+
+    horizontal_line * 100 + vertical_line
   end
 
   def perfect_reflections(grid) do
@@ -22,7 +39,7 @@ defmodule Day13 do
     0..(max_y - 1)
     |> Enum.reduce([], fn row_no, acc ->
       if mirror?(grid, row_no, max_y + 1),
-        do: [row_no | acc],
+        do: [row_no + 1 | acc],
         else: acc
     end)
   end
