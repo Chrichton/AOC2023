@@ -19,8 +19,12 @@ defmodule Day13 do
   end
 
   def solve(input) do
-    {vertical_grid, horizontal_grid} = read_input(input)
+    input
+    |> read_input()
+    |> process_pairs()
+  end
 
+  def process_pairs({vertical_grid, horizontal_grid}) do
     [horizontal_line] =
       horizontal_grid
       |> perfect_reflections()
