@@ -78,8 +78,8 @@ defmodule Day05 do
     seeds =
       seeds
       |> parse_numbers_string()
-      |> Enum.chunk_every(2)
-      |> Enum.flat_map(fn [start, lenght] ->
+      |> Stream.chunk_every(2)
+      |> Stream.flat_map(fn [start, lenght] ->
         start..(lenght - 1)
       end)
 
@@ -93,10 +93,13 @@ defmodule Day05 do
 
     {seeds, maps} = read_input2(input)
 
-    IO.puts("seeds: #{Enum.count(seeds)}")
+    # IO.puts("seeds: #{Enum.count(seeds)}")
+
+    IO.puts("after")
 
     seeds
-    |> Enum.map(&find_location(&1, maps))
+    |> Task.async_stream(&find_location(&1, maps), ordered: false)
+    |> Stream.map(fn {:ok, num} -> num end)
     |> Enum.min()
   end
 end
