@@ -96,25 +96,44 @@ defmodule Day13 do
         |> perfect_reflections()
 
       line_with_fixed_snudge(grid, vertical_line)
+      |> IO.inspect(label: "line_with_fixed_snudge(grid, vertical_line)")
       |> hd()
     else
       line_with_fixed_snudge(grid, horizontal_line)
+      |> IO.inspect(label: "line_with_fixed_snudge(grid, horizontal_line)")
       |> hd()
       |> Kernel.*(100)
     end
   end
 
   def line_with_fixed_snudge(grid, old_perfect_line) do
-    for {line, y} <- Stream.with_index(grid),
-        {char, x} <- Stream.with_index(line) do
-      if char == "#",
-        do: perfect_reflections(grid, x, y, ".", old_perfect_line),
-        else: perfect_reflections(grid, x, y, "#", old_perfect_line)
-    end
-    |> Enum.reject(&(&1 == :cont))
+    max_x =
+      grid
+      |> Enum.at(0)
+      |> Enum.count()
+      |> Kernel.-(1)
+
+    max_y = Enum.count(grid) - 1
+
+    Enum.with_index(grid, fn row, y ->
+      Enum.zip(row, 0..max_x)
+      |> Enum.reduce_while([], fn {char, x}, acc ->
+        if char == "#",
+          do: perfect_reflections(grid, x, y, ".", old_perfect_line, acc),
+          else: perfect_reflections(grid, x, y, "#", old_perfect_line, acc)
+      end)
+    end)
+
+    # for {line, y} <- Stream.with_index(grid),
+    #     {char, x} <- Stream.with_index(line) do
+    #   if char == "#",
+    #     do: perfect_reflections(grid, x, y, ".", old_perfect_line),
+    #     else: perfect_reflections(grid, x, y, "#", old_perfect_line)
+    # end
+    # |> Enum.reject(&(&1 == :cont))
   end
 
-  def perfect_reflections(grid, x, y, replace_char, old_perfect_line) do
+  def perfect_reflections(grid, x, y, replace_char, old_perfect_line, acc) do
     perfect_line =
       grid
       |> replace(x, y, replace_char)
@@ -122,7 +141,7 @@ defmodule Day13 do
 
     if perfect_line != [] and perfect_line != old_perfect_line,
       do: {:halt, perfect_line},
-      else: :cont
+      else: {:cont, acc}
   end
 
   def replace(grid, x, y, to) do

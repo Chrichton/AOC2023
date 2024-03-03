@@ -46,4 +46,8 @@ defmodule Day13Test do
 
     assert Day13.line_with_fixed_snudge(grid, [4]) == nil
   end
+
+  test "sample2" do
+    assert Day13.solve2("sample") == 400
+  end
 end
