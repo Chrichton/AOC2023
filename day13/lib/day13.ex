@@ -75,4 +75,59 @@ defmodule Day13 do
     |> List.zip()
     |> Enum.map(&Tuple.to_list/1)
   end
+
+  # ----------------------------------------------------------------
+
+  def solve2(input) do
+    input
+    |> read_input()
+    |> Enum.map(&process_grid2/1)
+    |> Enum.sum()
+  end
+
+  def process_grid2(grid) do
+    horizontal_line = perfect_reflections(grid)
+
+    if horizontal_line == [] do
+      grid = transpose(grid)
+
+      [vertical_line] =
+        grid
+        |> perfect_reflections()
+
+      line_with_fixed_snudge(grid, vertical_line)
+      |> hd()
+    else
+      line_with_fixed_snudge(grid, horizontal_line)
+      |> hd()
+      |> Kernel.*(100)
+    end
+  end
+
+  def line_with_fixed_snudge(grid, old_perfect_line) do
+    for {line, y} <- Stream.with_index(grid),
+        {char, x} <- Stream.with_index(line) do
+      if char == "#",
+        do: perfect_reflections(grid, x, y, ".", old_perfect_line),
+        else: perfect_reflections(grid, x, y, "#", old_perfect_line)
+    end
+    |> Enum.reject(&(&1 == :cont))
+  end
+
+  def perfect_reflections(grid, x, y, replace_char, old_perfect_line) do
+    perfect_line =
+      grid
+      |> replace(x, y, replace_char)
+      |> perfect_reflections()
+
+    if perfect_line != [] and perfect_line != old_perfect_line,
+      do: {:halt, perfect_line},
+      else: :cont
+  end
+
+  def replace(grid, x, y, to) do
+    grid_line = Enum.at(grid, y)
+    replaced_line = List.replace_at(grid_line, x, to)
+    List.replace_at(grid, y, replaced_line)
+  end
 end
