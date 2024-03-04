@@ -62,7 +62,7 @@ defmodule Day13Test do
     assert Day13.solve2("sample") == 400
   end
 
-  # 28173 too low
+  # 28173, 34107 too low
   test "star2" do
     assert Day13.solve2("star") == 400
   end

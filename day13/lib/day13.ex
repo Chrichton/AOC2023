@@ -33,12 +33,17 @@ defmodule Day13 do
   def perfect_reflections(grid) do
     max_y = Enum.count(grid) - 1
 
-    0..(max_y - 1)
-    |> Enum.reduce_while([], fn row_no, acc ->
-      if mirror?(grid, row_no, max_y + 1),
-        do: {:halt, [row_no + 1]},
-        else: {:cont, acc}
-    end)
+    result =
+      0..(max_y - 1)
+      |> Enum.reduce([], fn row_no, acc ->
+        if mirror?(grid, row_no, max_y + 1),
+          do: [row_no + 1 | acc],
+          else: acc
+      end)
+
+    if result == [],
+      do: [],
+      else: [Enum.max(result)]
   end
 
   def mirror?(grid, row_no, y_count) do
@@ -94,10 +99,10 @@ defmodule Day13 do
 
       if vertical_line == [],
         do: 0,
-        else: hd(vertical_line)
+        else: Enum.max(vertical_line)
     else
       horizontal_line
-      |> hd()
+      |> Enum.max()
       |> Kernel.*(100)
     end
   end
@@ -115,23 +120,14 @@ defmodule Day13 do
   end
 
   def line_with_fixed_smudge(grid, old_perfect_line) do
-    max_x =
-      grid
-      |> Enum.at(0)
-      |> Enum.count()
-      |> Kernel.-(1)
-
-    max_y = Enum.count(grid) - 1
-
-    Enum.zip(grid, 0..max_y)
-    |> Enum.reduce_while([], fn {row, y}, acc ->
-      Enum.zip(row, 0..max_x)
-      |> Enum.reduce_while(acc, fn {char, x}, _acc ->
-        if char == "#",
-          do: perfect_reflections(grid, x, y, ".", old_perfect_line),
-          else: perfect_reflections(grid, x, y, "#", old_perfect_line)
-      end)
-    end)
+    for {line, y} <- Stream.with_index(grid),
+        {char, x} <- Stream.with_index(line) do
+      if char == "#",
+        do: perfect_reflections(grid, x, y, ".", old_perfect_line),
+        else: perfect_reflections(grid, x, y, "#", old_perfect_line)
+    end
+    |> Enum.reject(&(&1 == 0))
+    |> Enum.uniq()
   end
 
   def perfect_reflections(grid, x, y, replace_char, old_perfect_line) do
@@ -141,8 +137,8 @@ defmodule Day13 do
       |> perfect_reflections()
 
     if perfect_line != [] and perfect_line != old_perfect_line,
-      do: {:halt, {:halt, perfect_line}},
-      else: {:cont, {:cont, []}}
+      do: hd(perfect_line),
+      else: 0
   end
 
   def replace(grid, x, y, to) do
