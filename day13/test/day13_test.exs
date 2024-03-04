@@ -45,7 +45,8 @@ defmodule Day13Test do
     assert Day13.line_with_fixed_smudge(grid1(), [5]) == [3]
   end
 
-  test "line_with_fixed_smudge2" do
+  test "line_with_fixed
+  _smudge2" do
     assert Day13.line_with_fixed_smudge(grid2(), [4]) == [1]
   end
 

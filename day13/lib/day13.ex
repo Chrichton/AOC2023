@@ -86,15 +86,13 @@ defmodule Day13 do
   end
 
   def process_grid2(grid) do
-    perfect_line = perfect_line(grid) |> IO.inspect(label: "perfect_line")
+    perfect_line = perfect_line(grid)
 
     horizontal_line =
       line_with_fixed_smudge(grid, perfect_line)
-      |> IO.inspect(label: "line_with_fixed_smudge(grid, horizontal_line)")
 
     if horizontal_line == [] do
       line_with_fixed_smudge(transpose(grid), perfect_line)
-      |> IO.inspect(label: "line_with_fixed_smudge(grid, vertical_line)")
       |> hd()
     else
       horizontal_line
@@ -107,12 +105,11 @@ defmodule Day13 do
     horizontal_line = perfect_reflections(grid)
 
     if horizontal_line != [] do
-      hd(horizontal_line)
+      horizontal_line
     else
       grid
       |> transpose()
       |> perfect_reflections()
-      |> hd()
     end
   end
 
