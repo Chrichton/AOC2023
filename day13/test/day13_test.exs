@@ -50,19 +50,11 @@ defmodule Day13Test do
   end
 
   test "line_with_fixed_smudge1 transposed" do
-    grid =
-      grid1()
-      |> Day13.transpose()
-
-    assert Day13.line_with_fixed_smudge(grid, [5]) == []
+    assert Day13.line_with_fixed_smudge(grid1() |> Day13.transpose(), [5]) == []
   end
 
   test "line_with_fixed_smudge2 transposed" do
-    grid =
-      grid2()
-      |> Day13.transpose()
-
-    assert Day13.line_with_fixed_smudge(grid, [4]) == []
+    assert Day13.line_with_fixed_smudge(grid2() |> Day13.transpose(), [4]) == []
   end
 
   test "sample2" do
