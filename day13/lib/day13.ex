@@ -21,12 +21,10 @@ defmodule Day13 do
     horizontal_line = perfect_reflections(grid)
 
     if horizontal_line == [] do
-      [vertical_line] =
-        grid
-        |> transpose()
-        |> perfect_reflections()
-
-      vertical_line
+      grid
+      |> transpose()
+      |> perfect_reflections()
+      |> hd()
     else
       hd(horizontal_line) * 100
     end
@@ -92,8 +90,11 @@ defmodule Day13 do
       line_with_fixed_smudge(grid, perfect_line)
 
     if horizontal_line == [] do
-      line_with_fixed_smudge(transpose(grid), perfect_line)
-      |> hd()
+      vertical_line = line_with_fixed_smudge(transpose(grid), perfect_line)
+
+      if vertical_line == [],
+        do: 0,
+        else: hd(vertical_line)
     else
       horizontal_line
       |> hd()
