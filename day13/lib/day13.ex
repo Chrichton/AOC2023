@@ -92,10 +92,10 @@ defmodule Day13 do
     perfect_line = perfect_line(grid)
 
     horizontal_line =
-      line_with_fixed_smudge(grid, perfect_line)
+      lines_with_fixed_smudge(grid, perfect_line)
 
     if horizontal_line == [] do
-      vertical_line = line_with_fixed_smudge(transpose(grid), perfect_line)
+      vertical_line = lines_with_fixed_smudge(transpose(grid), perfect_line)
 
       if vertical_line == [],
         do: 0,
@@ -119,7 +119,7 @@ defmodule Day13 do
     end
   end
 
-  def line_with_fixed_smudge(grid, old_perfect_line) do
+  def lines_with_fixed_smudge(grid, old_perfect_line) do
     for {line, y} <- Stream.with_index(grid),
         {char, x} <- Stream.with_index(line) do
       if char == "#",
