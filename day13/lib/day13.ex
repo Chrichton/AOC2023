@@ -92,19 +92,38 @@ defmodule Day13 do
     perfect_line = perfect_line(grid)
 
     horizontal_line =
-      lines_with_fixed_smudge(grid, perfect_line)
-
-    if horizontal_line == [] do
-      vertical_line = lines_with_fixed_smudge(transpose(grid), perfect_line)
-
-      if vertical_line == [],
-        do: 0,
-        else: Enum.max(vertical_line)
-    else
-      horizontal_line
-      |> Enum.max()
+      grid
+      |> lines_with_fixed_smudge(perfect_line)
+      |> enum_max()
       |> Kernel.*(100)
-    end
+
+    vertical_line =
+      grid
+      |> transpose()
+      |> lines_with_fixed_smudge(perfect_line)
+      |> enum_max()
+
+    max(horizontal_line, vertical_line)
+
+    #  perfect_line = perfect_line(grid)
+
+    # if horizontal_line == [] do
+    #   vertical_line = lines_with_fixed_smudge(transpose(grid), perfect_line)
+
+    #   if vertical_line == [] do
+    #     IO.inspect(grid, label: "grid")
+    #     IO.inspect(perfect_line, label: "perfect_line")
+    #     IO.puts("\n")
+
+    #     0
+    #   else
+    #     Enum.max(vertical_line)
+    #   end
+    # else
+    #   horizontal_line
+    #   |> Enum.max()
+    #   |> Kernel.*(100)
+    # end
   end
 
   def perfect_line(grid) do
@@ -146,4 +165,7 @@ defmodule Day13 do
     replaced_line = List.replace_at(grid_line, x, to)
     List.replace_at(grid, y, replaced_line)
   end
+
+  def enum_max([]), do: 0
+  def enum_max(list), do: Enum.max(list)
 end
