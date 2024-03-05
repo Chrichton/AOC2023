@@ -69,28 +69,28 @@ defmodule Day14 do
     |> cycles(cycle + 1, max_cycles)
   end
 
-  @cycle_from_80 [
-    98593,
-    98607,
-    98630,
-    98653,
-    98655,
-    98646,
-    98633,
-    98612,
-    98590,
-    98576,
-    98565,
-    98562,
-    98574,
-    98587,
-    98595,
-    98593,
-    98585
+  @cycle_from_81 [
+    100_011,
+    100_025,
+    100_043,
+    100_071,
+    100_084,
+    100_084,
+    100_086,
+    100_084,
+    100_086,
+    100_086,
+    100_079,
+    100_064,
+    100_047,
+    100_034,
+    100_024,
+    100_016,
+    100_008
   ]
 
-  def calc_load_from_80_cycles_on(cycles) do
-    index = rem(cycles - 80, Enum.count(@cycle_from_80))
-    Enum.at(@cycle_from_80, index)
+  def calc_load_from_81_cycles_on(cycles) do
+    index = rem(cycles - 81, Enum.count(@cycle_from_81))
+    Enum.at(@cycle_from_81, index)
   end
 end

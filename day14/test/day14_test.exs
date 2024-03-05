@@ -59,37 +59,31 @@ defmodule Day14Test do
     assert Day14.solve("star") == 109_098
   end
 
-  # cycles result
-  # 5       65
-  # 3       69
-  # 2       69
-  # 1       87
-
-  # first cycle
-  # 0 -> 104
-  # 1 -> 121
-  # 2 -> 136
-  # 3 -> 135
-  # 4 ->  87
-
-  test "sample2" do
+  test "sample2.1" do
     assert Day14.solve2("sample", 1) == 87
   end
 
-  # repeating_cycle(starts(for 80))
+  test "sample2.2" do
+    assert Day14.solve2("sample", 2) == 69
+  end
+
+  test "sample2.3" do
+    assert Day14.solve2("sample", 3) == 69
+  end
+
+  # repeating_cycle(starts(for 81))
   # test "find_repeating_cycle" do
-  #   for max_cycle <- 1..80 do
+  #   for max_cycle <- 75..100 do
   #     result = Day14.solve2("star", max_cycle)
   #     IO.puts("#{max_cycle}: #{result}")
   #   end
   # end
 
-  test "calc_load_from_80_cycles_on" do
-    assert Day14.calc_load_from_80_cycles_on(81) == 98607
+  test "calc_load_from_81_cycles_on" do
+    assert Day14.calc_load_from_81_cycles_on(82) == 100_025
   end
 
-  # 98574, 98595 too low
-  # test "star2" do
-  #   assert Day14.calc_load_from_80_cycles_on(1_000_000_000) == 100_064
-  # end
+  test "star2" do
+    assert Day14.calc_load_from_81_cycles_on(1_000_000_000) == 100_064
+  end
 end
