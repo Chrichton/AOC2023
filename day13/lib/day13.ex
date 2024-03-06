@@ -84,31 +84,41 @@ defmodule Day13 do
   def solve2(input) do
     input
     |> read_input()
+    # |> Enum.drop(1)
+    # |> Enum.take(1)
     |> Enum.map(&process_grid2/1)
     |> Enum.sum()
   end
 
   def process_grid2(grid) do
-    perfect_line = perfect_line(grid)
+    # IO.inspect(grid)
+    # IO.inspect(transpose(grid))
+
+    perfect_line_horizontal = perfect_line(grid)
 
     horizontal_line =
       grid
-      |> lines_with_fixed_smudge(perfect_line)
+      |> lines_with_fixed_smudge(perfect_line_horizontal)
       |> enum_max()
       |> Kernel.*(100)
+
+    perfect_line_vertical = perfect_line(transpose(grid))
 
     vertical_line =
       grid
       |> transpose()
-      |> lines_with_fixed_smudge(perfect_line)
+      |> lines_with_fixed_smudge(perfect_line_vertical)
       |> enum_max()
 
     max(horizontal_line, vertical_line)
 
-    #  perfect_line = perfect_line(grid)
+    # IO.inspect(grid, label: "grid")
+    # perfect_line = perfect_line(grid)
+    # horizontal_line = lines_with_fixed_smudge(grid, perfect_line)
 
     # if horizontal_line == [] do
-    #   vertical_line = lines_with_fixed_smudge(transpose(grid), perfect_line)
+    #   perfect_line = perfect_line(transpose(grid)) |> IO.inspect()
+    #   vertical_line = lines_with_fixed_smudge(transpose(grid), {perfect_line})
 
     #   if vertical_line == [] do
     #     IO.inspect(grid, label: "grid")
