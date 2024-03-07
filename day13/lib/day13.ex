@@ -85,8 +85,7 @@ defmodule Day13 do
     input
     |> read_input()
     |> Enum.map(&process_grid2/1)
-
-    # |> Enum.sum()
+    |> Enum.sum()
   end
 
   def process_grid2(grid) do
