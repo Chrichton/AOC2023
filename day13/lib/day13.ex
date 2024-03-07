@@ -43,7 +43,7 @@ defmodule Day13 do
 
     if result == [],
       do: [],
-      else: [Enum.max(result)]
+      else: result
   end
 
   def mirror?(grid, row_no, y_count) do
@@ -84,16 +84,12 @@ defmodule Day13 do
   def solve2(input) do
     input
     |> read_input()
-    # |> Enum.drop(1)
-    # |> Enum.take(1)
     |> Enum.map(&process_grid2/1)
-    |> Enum.sum()
+
+    # |> Enum.sum()
   end
 
   def process_grid2(grid) do
-    # IO.inspect(grid)
-    # IO.inspect(transpose(grid))
-
     perfect_line_horizontal = perfect_line(grid)
 
     horizontal_line =
@@ -160,14 +156,18 @@ defmodule Day13 do
   end
 
   def perfect_reflections(grid, x, y, replace_char, old_perfect_line) do
-    perfect_line =
+    perfect_lines =
       grid
       |> replace(x, y, replace_char)
       |> perfect_reflections()
 
-    if perfect_line != [] and perfect_line != old_perfect_line,
-      do: hd(perfect_line),
-      else: 0
+    if perfect_lines != [] and perfect_lines != old_perfect_line do
+      perfect_lines
+      |> Enum.reject(&(&1 == hd(old_perfect_line)))
+      |> enum_max()
+    else
+      0
+    end
   end
 
   def replace(grid, x, y, to) do
