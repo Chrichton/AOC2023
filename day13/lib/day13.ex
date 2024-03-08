@@ -84,6 +84,8 @@ defmodule Day13 do
   def solve2(input) do
     input
     |> read_input()
+    # |> Enum.drop(12)
+    # |> Enum.take(1)
     |> Enum.map(&process_grid2/1)
     |> Enum.sum()
   end
@@ -93,6 +95,7 @@ defmodule Day13 do
 
     horizontal_line =
       grid
+      # |> IO.inspect()
       |> lines_with_fixed_smudge(perfect_line_horizontal)
       |> enum_max()
       |> Kernel.*(100)
@@ -102,6 +105,7 @@ defmodule Day13 do
     vertical_line =
       grid
       |> transpose()
+      # |> IO.inspect()
       |> lines_with_fixed_smudge(perfect_line_vertical)
       |> enum_max()
 
@@ -161,6 +165,11 @@ defmodule Day13 do
       |> perfect_reflections()
 
     if perfect_lines != [] and perfect_lines != old_perfect_line do
+      # IO.inspect(grid, label: "grid")
+      # IO.inspect(perfect_lines, label: "perfect_lines")
+      # IO.puts("x: #{x}, y: #{y}, replace_char: #{replace_char}")
+      # IO.puts("\n")
+
       perfect_lines
       |> Enum.reject(&(&1 == hd(old_perfect_line)))
       |> enum_max()
@@ -178,3 +187,6 @@ defmodule Day13 do
   def enum_max([]), do: 0
   def enum_max(list), do: Enum.max(list)
 end
+
+# Solution
+# https://raw.githubusercontent.com/tywhisky/advent-of-code/master/2023/day_13/solution.exs
