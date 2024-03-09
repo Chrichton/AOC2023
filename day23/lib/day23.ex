@@ -39,23 +39,23 @@ defmodule Day23 do
         trails,
         [Hike.new(start_coord, MapSet.new([start_coord]))],
         [],
-        dest_coord
+        dest_coord,
+        1
       )
     end)
   end
 
-  def next_step(_trails, [], completed_hikes, _dest_coord) do
+  def next_step(_trails, [], completed_hikes, _dest_coord, _count) do
     Stream.map(completed_hikes, fn %Hike{visited: visited} -> visited end)
-    |> Stream.map(&Enum.count/1)
-    |> Enum.max()
+    # |> Stream.map(&Enum.count/1)
+    # |> Enum.max()
+    # |> Kernel.-(1)
   end
 
-  def next_step(trails, hikes, completed_hikes, dest_coord) do
-    IO.inspect(hikes, label: "hikes")
-
+  def next_step(trails, hikes, completed_hikes, dest_coord, count) do
     hikes
     |> Enum.reduce(
-      {hikes, completed_hikes},
+      {[], completed_hikes},
       fn hike, {acc_hikes, acc_completed_hikes} ->
         next_hikes(hike, trails)
         |> Enum.reduce(
@@ -69,7 +69,9 @@ defmodule Day23 do
       end
     )
     |> then(fn {new_hikes, new_completed_hike} ->
-      next_step(trails, new_hikes, new_completed_hike, dest_coord)
+      # IO.inspect({new_hikes, new_completed_hike}, label: "new_hikes")
+
+      next_step(trails, new_hikes, new_completed_hike, dest_coord, count + 1)
     end)
   end
 
