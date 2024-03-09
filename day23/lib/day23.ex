@@ -73,12 +73,12 @@ defmodule Day23 do
   end
 
   def next_hikes(%Hike{} = hike, trails) do
-    case Map.fetch(trails, hike.coord) do
-      {:ok, ">"} -> [next_hike(hike, :east)]
-      {:ok, "<"} -> [next_hike(hike, :west)]
-      {:ok, "^"} -> [next_hike(hike, :north)]
-      {:ok, "v"} -> [next_hike(hike, :south)]
-      {:ok, "."} -> neighbors(hike)
+    case Map.get(trails, hike.coord) do
+      ">" -> [next_hike(hike, :east)]
+      "<" -> [next_hike(hike, :west)]
+      "^" -> [next_hike(hike, :north)]
+      "v" -> [next_hike(hike, :south)]
+      "." -> neighbors(hike)
     end
     |> Enum.filter(fn %Hike{coord: coord, visited: visited} ->
       Map.fetch(trails, coord) != :error and
