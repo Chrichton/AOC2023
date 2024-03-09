@@ -28,17 +28,15 @@ defmodule Day23 do
     start_coord = {1, 0}
     dest_coord = {max_x - 1, max_y}
 
-    {trails, start_coord, dest_coord, max_x, max_y}
+    {trails, start_coord, dest_coord}
   end
 
   def solve(input) do
     input
     |> read_input()
-    |> then(fn {trails, start_coord, dest_coord, max_x, max_y} ->
+    |> then(fn {trails, start_coord, dest_coord} ->
       next_step(
         trails,
-        max_x,
-        max_y,
         [Hike.new(start_coord, MapSet.new([start_coord]))],
         [],
         dest_coord
@@ -46,60 +44,68 @@ defmodule Day23 do
     end)
   end
 
-  def next_step(trails, max_x, max_y, hikes, completed_hikes, dest_coord) do
+  def next_step(_trails, [], completed_hikes, _dest_coord) do
+    Stream.map(completed_hikes, fn %Hike{visited: visited} -> visited end)
+    |> Stream.map(&Enum.count/1)
+    |> Enum.max()
+  end
+
+  def next_step(trails, hikes, completed_hikes, dest_coord) do
+    IO.inspect(hikes, label: "hikes")
+
     hikes
     |> Enum.reduce(
       {hikes, completed_hikes},
       fn hike, {acc_hikes, acc_completed_hikes} ->
-        next_hikes =
-          next_hikes(hike, trails, max_x, max_y)
+        next_hikes(hike, trails)
+        |> Enum.reduce(
+          {acc_hikes, acc_completed_hikes},
+          fn %Hike{coord: coord} = hike, {acc_hikes2, acc_completed_hikes2} ->
+            if coord == dest_coord,
+              do: {acc_hikes2, [hike | acc_completed_hikes2]},
+              else: {[hike | acc_hikes2], acc_completed_hikes2}
+          end
+        )
       end
     )
-    |> then(fn {new_hikes, new_visited} ->
-      next_step(trails, max_x, max_y, new_hikes, completed_hikes, dest_coord)
+    |> then(fn {new_hikes, new_completed_hike} ->
+      next_step(trails, new_hikes, new_completed_hike, dest_coord)
     end)
   end
 
-  def next_hikes(%Hike{} = hike, trails, max_x, max_y) do
-    case trails.fetch(trails, hike.coord) do
+  def next_hikes(%Hike{} = hike, trails) do
+    case Map.fetch(trails, hike.coord) do
       {:ok, ">"} -> [next_hike(hike, :east)]
       {:ok, "<"} -> [next_hike(hike, :west)]
       {:ok, "^"} -> [next_hike(hike, :north)]
       {:ok, "v"} -> [next_hike(hike, :south)]
       {:ok, "."} -> neighbors(hike)
     end
-    |> Enum.filter(fn %Hike{coord: {x1, y1}} ->
-      x1 in 0..max_x and y1 in 0..max_y
+    |> Enum.filter(fn %Hike{coord: coord, visited: visited} ->
+      Map.fetch(trails, coord) != :error and
+        not MapSet.member?(visited, coord)
+    end)
+    |> Enum.map(fn %Hike{coord: coord, visited: visited} = hike ->
+      %{hike | visited: MapSet.put(visited, coord)}
     end)
   end
 
-  defp next_hike(%Hike{coord: {x, y}, visited: visited}, direction) do
+  defp next_hike(%Hike{coord: {x, y}} = hike, direction) do
     case direction do
-      :north ->
-        next_coord = {x, y - 1}
-        Hike.new(next_coord, MapSet.put(visited, next_coord))
-
-      :south ->
-        next_coord = {x, y + 1}
-        Hike.new(next_coord, MapSet.put(visited, next_coord))
-
-      :west ->
-        next_coord = {x + 1, y}
-        Hike.new(next_coord, MapSet.put(visited, next_coord))
-
-      :east ->
-        next_coord = {x + 1, y}
-        Hike.new(next_coord, MapSet.put(visited, next_coord))
+      :north -> %{hike | coord: {x, y - 1}}
+      :south -> %{hike | coord: {x, y + 1}}
+      :west -> %{hike | coord: {x + 1, y}}
+      :east -> %{hike | coord: {x + 1, y}}
     end
   end
 
-  defp neighbors(%Hike{coord: {x, y}, visited: visited}) do
+  defp neighbors(%Hike{coord: {x, y}} = hike) do
     [
       {x, y - 1},
       {x, y + 1},
       {x + 1, y},
       {x - 1, y}
     ]
-    |> Enum.map(&Hike.new(&1, MapSet.put(visited, &1)))
+    |> Enum.map(&%{hike | coord: &1})
   end
 end
