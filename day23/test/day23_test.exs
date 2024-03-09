@@ -24,6 +24,6 @@ defmodule Day23Test do
   end
 
   test "star" do
-    assert Day23.solve("star") == 94
+    assert Day23.solve("star") == 2298
   end
 end
