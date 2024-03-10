@@ -35,6 +35,9 @@ defmodule Day18 do
       end
     )
     |> elem(1)
+    |> MapSet.to_list()
+    |> Enum.sort_by(fn {x, _y} -> x end)
+    |> Enum.sort_by(fn {_x, y} -> y end)
   end
 
   def next_positions(last_position, direction, distance) do
