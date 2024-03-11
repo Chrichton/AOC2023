@@ -58,12 +58,53 @@ defmodule Day18 do
       Enum.filter(coords, fn {_x, y} -> y == current_y end)
       |> Enum.map(fn {x, _y} -> x end)
     end)
+    |> Enum.map(&strip_continuous_numbers/1)
     |> Enum.map(fn x_coords -> process_x_coords(x_coords) end)
   end
 
   def process_x_coords(x_coords) do
-    Enum.chunk_every(x_coords, 2, 1, :discard)
+    IO.inspect(x_coords, label: "x_coords")
+
+    pairs =
+      Enum.chunk_every(x_coords, 2, 1, :discard)
+      |> IO.inspect(label: "pairs")
+
+    Enum.zip(pairs, 0..(Enum.count(pairs) - 1))
+    |> Enum.filter(fn {_pair, index} -> rem(index, 2) == 0 end)
+    |> Enum.map(fn {pair, _index} -> pair end)
     |> Enum.reduce(0, fn [from, to], acc -> to - from - 1 + acc end)
+  end
+
+  def strip_continuous_numbers([_first | rest] = numbers) do
+    last_number = -1
+    rest = rest ++ [last_number]
+
+    numbers
+    |> Enum.zip(rest)
+    |> Enum.reduce({[], :from_right}, fn {number, next_number}, {acc, direction} ->
+      case direction do
+        :from_right ->
+          if number + 1 == next_number,
+            do: {acc, direction},
+            else: {[number | acc], :from_left}
+
+        :from_left ->
+          if next_number == last_number do
+            {[number | acc], :skip}
+          else
+            if number + 1 == next_number,
+              do: {[number | acc], :skip},
+              else: {acc, direction}
+          end
+
+        :skip ->
+          if number + 1 == next_number,
+            do: {acc, :skip},
+            else: {acc, :from_left}
+      end
+    end)
+    |> elem(0)
+    |> Enum.reverse()
   end
 
   def next_positions(last_position, direction, distance) do

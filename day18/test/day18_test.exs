@@ -25,20 +25,37 @@ defmodule Day18Test do
     assert Day18.process_x_coords([0, 2, 3, 7]) == 1 + 0 + 3
   end
 
-  test "process_x_coords three coords" do
-    # count numbers between pairs of neighbor-numbers
-    assert Day18.process_x_coords([1, 3, 7]) == 4
-  end
+  # test "process_x_coords three coords" do
+  #   # count numbers between pairs of neighbor-numbers
+  #   assert Day18.process_x_coords([1, 3, 7]) == 4
+  # end
 
   test "process_x_coords two coords" do
     assert Day18.process_x_coords([0, 6]) == 5
   end
 
-  test "process_x_coords one coord" do
+  test "process_x_coords one coords" do
     assert Day18.process_x_coords([6]) == 0
+  end
+
+  test "strip_continuous_numbers" do
+    assert Day18.strip_continuous_numbers([0, 1, 3, 4, 5]) == [1, 3]
+  end
+
+  test "strip_continuous_numbers2" do
+    assert Day18.strip_continuous_numbers([0, 1, 4, 5, 6]) == [1, 4]
+  end
+
+  test "strip_continuous_numbers3" do
+    assert Day18.strip_continuous_numbers([0, 6]) == [0, 6]
   end
 
   test "sample" do
     assert Day18.solve("sample") == 62
+  end
+
+  # 68521, 52098 too high, 46847 too low
+  test "star" do
+    assert Day18.solve("star") == 0
   end
 end
