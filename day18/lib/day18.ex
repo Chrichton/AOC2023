@@ -25,19 +25,45 @@ defmodule Day18 do
   end
 
   def solve(input) do
-    input
-    |> read_input()
-    |> Enum.reduce(
-      {{0, 0}, MapSet.new([{0, 0}])},
-      fn %Command{direction: direction, distance: distance}, {last_position, positions} ->
-        {last_position, next_positions} = next_positions(last_position, direction, distance)
-        {last_position, MapSet.union(positions, MapSet.new(next_positions))}
-      end
-    )
-    |> elem(1)
-    |> MapSet.to_list()
-    |> Enum.sort_by(fn {x, _y} -> x end)
-    |> Enum.sort_by(fn {_x, y} -> y end)
+    trench =
+      input
+      |> read_input()
+      |> Enum.reduce(
+        {{0, 0}, MapSet.new([{0, 0}])},
+        fn %Command{direction: direction, distance: distance}, {last_position, positions} ->
+          {last_position, next_positions} = next_positions(last_position, direction, distance)
+          {last_position, MapSet.union(positions, MapSet.new(next_positions))}
+        end
+      )
+      |> elem(1)
+      |> MapSet.to_list()
+
+    trench_count = Enum.count(trench)
+
+    interior_count =
+      trench
+      |> Enum.sort_by(fn {x, _y} -> x end)
+      |> Enum.sort_by(fn {_x, y} -> y end)
+      |> process_lines()
+      |> Enum.sum()
+
+    trench_count + interior_count
+  end
+
+  def process_lines(coords) do
+    {_min_x, min_y} = hd(coords)
+    {_max_x, max_y} = List.last(coords)
+
+    Enum.map(min_y..max_y, fn current_y ->
+      Enum.filter(coords, fn {_x, y} -> y == current_y end)
+      |> Enum.map(fn {x, _y} -> x end)
+    end)
+    |> Enum.map(fn x_coords -> process_x_coords(x_coords) end)
+  end
+
+  def process_x_coords(x_coords) do
+    Enum.chunk_every(x_coords, 2, 1, :discard)
+    |> Enum.reduce(0, fn [from, to], acc -> to - from - 1 + acc end)
   end
 
   def next_positions(last_position, direction, distance) do

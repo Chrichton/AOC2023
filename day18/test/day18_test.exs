@@ -20,46 +20,25 @@ defmodule Day18Test do
            ]
   end
 
+  test "process_x_coords" do
+    # count numbers between pairs of neighbor-numbers
+    assert Day18.process_x_coords([0, 2, 3, 7]) == 1 + 0 + 3
+  end
+
+  test "process_x_coords three coords" do
+    # count numbers between pairs of neighbor-numbers
+    assert Day18.process_x_coords([1, 3, 7]) == 4
+  end
+
+  test "process_x_coords two coords" do
+    assert Day18.process_x_coords([0, 6]) == 5
+  end
+
+  test "process_x_coords one coord" do
+    assert Day18.process_x_coords([6]) == 0
+  end
+
   test "sample" do
-    assert Day18.solve("sample") == [
-             {0, 0},
-             {1, 0},
-             {2, 0},
-             {3, 0},
-             {4, 0},
-             {5, 0},
-             {6, 0},
-             {0, 1},
-             {6, 1},
-             {0, 2},
-             {1, 2},
-             {2, 2},
-             {6, 2},
-             {2, 3},
-             {6, 3},
-             {2, 4},
-             {6, 4},
-             {0, 5},
-             {1, 5},
-             {2, 5},
-             {4, 5},
-             {5, 5},
-             {6, 5},
-             {0, 6},
-             {4, 6},
-             {0, 7},
-             {1, 7},
-             {4, 7},
-             {5, 7},
-             {6, 7},
-             {1, 8},
-             {6, 8},
-             {1, 9},
-             {2, 9},
-             {3, 9},
-             {4, 9},
-             {5, 9},
-             {6, 9}
-           ]
+    assert Day18.solve("sample") == 62
   end
 end
