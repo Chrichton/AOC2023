@@ -50,6 +50,10 @@ defmodule Day18Test do
     assert Day18.strip_continuous_numbers([0, 6]) == [0, 6]
   end
 
+  test "strip_continuous_numbers4" do
+    assert Day18.strip_continuous_numbers([2, 3, 6, 7, 10, 11, 14, 15, 20]) == [3, 6, 10, 14, 20]
+  end
+
   test "sample" do
     assert Day18.solve("sample") == 62
   end

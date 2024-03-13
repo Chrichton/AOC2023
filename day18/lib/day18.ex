@@ -20,7 +20,7 @@ defmodule Day18 do
     [direction, distance, color_code] = String.split(line, " ")
 
     distance = String.to_integer(distance)
-    color_code = String.slice(color_code, 1, String.length(line) - 6)
+    color_code = String.slice(color_code, 1, String.length(color_code) - 2)
     Command.new(direction, distance, color_code)
   end
 
