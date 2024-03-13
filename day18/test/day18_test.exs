@@ -58,8 +58,11 @@ defmodule Day18Test do
     assert Day18.solve("sample") == 62
   end
 
-  # 68521, 52098 too high, 46847 too low
+  # 68521, 52098 too high, 46847 too low, correct: 50746,
+  # https://elixirforum.com/t/advent-of-code-2023-day-18/60436/4
+  # midouest
+
   test "star" do
-    assert Day18.solve("star") == 0
+    assert Day18.solve("star") == 50746
   end
 end
