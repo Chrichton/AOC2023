@@ -1,38 +1,54 @@
 defmodule Day21 do
   def read_input(input) do
-    input
-    |> File.read!()
-    |> String.split("\n")
-    |> lines_to_map()
+    lines =
+      input
+      |> File.read!()
+      |> String.split("\n")
+
+    point_char_map = lines_to_map(lines)
+
+    height = Enum.count(lines)
+
+    width =
+      lines
+      |> Enum.at(0)
+      |> String.length()
+
+    {point_char_map, width, height}
   end
 
   def solve(input, max_steps) do
     input
     |> read_input()
-    |> process_steps(max_steps)
+    |> then(fn {point_char_map, width, height} ->
+      process_steps(point_char_map, width, height, max_steps)
+    end)
   end
 
-  def process_steps(point_char_map, max_steps) do
+  def process_steps(point_char_map, width, height, max_steps) do
     start = find_startpoint(point_char_map)
 
-    next_step(MapSet.new([start]), point_char_map, 0, max_steps)
+    next_step(MapSet.new([start]), point_char_map, width, height, 0, max_steps)
   end
 
-  def next_step(last_points, _point_char_map, steps, max_steps) when steps == max_steps,
-    do: Enum.count(last_points)
+  def next_step(last_points, _point_char_map, _width, _height, steps, max_steps)
+      when steps == max_steps,
+      do: Enum.count(last_points)
 
-  def next_step(last_points, point_char_map, steps, max_steps) do
+  def next_step(last_points, point_char_map, width, height, steps, max_steps) do
     new_points =
       Enum.reduce(last_points, MapSet.new(), fn point, acc ->
         point
         |> neighbors()
-        |> MapSet.reject(&(Map.get(point_char_map, &1) == "#"))
+        |> MapSet.reject(&(get(point_char_map, &1, width, height) == "#"))
         |> MapSet.union(acc)
       end)
 
     next_step(
       new_points,
       point_char_map,
+      width,
+      height,
       steps + 1,
       max_steps
     )
@@ -53,7 +69,21 @@ defmodule Day21 do
 
   def neighbors({x, y}) do
     [{x - 1, y}, {x + 1, y}, {x, y + 1}, {x, y - 1}]
-    |> Enum.reject(fn {x, y} -> x < 0 or y < 0 end)
     |> MapSet.new()
+  end
+
+  # ----------------------------------------------------------------
+
+  def get(point_char_map, {x, y}, width, height) do
+    x_mod = modulo(x, width)
+    y_mod = modulo(y, height)
+
+    Map.get(point_char_map, {x_mod, y_mod})
+  end
+
+  def modulo(value, divisor) do
+    if value < 0 and rem(value, divisor) != 0,
+      do: rem(value, divisor) + abs(divisor),
+      else: rem(value, divisor)
   end
 end
