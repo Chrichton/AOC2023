@@ -52,7 +52,7 @@ defmodule Day18Flood do
 
     perimeter =
       input
-      |> read_input()
+      |> read_input_func.()
       |> Enum.map(fn %Command{distance: distance} -> distance end)
       |> Enum.sum()
 

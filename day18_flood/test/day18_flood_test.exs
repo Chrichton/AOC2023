@@ -42,6 +42,6 @@ defmodule Day18FloodTest do
 
   # 70086134643475 too low
   test "star2" do
-    assert Day18Flood.solve("star", &Day18Flood.read_input2/1) == 0
+    assert Day18Flood.solve("star", &Day18Flood.read_input2/1) == 70_086_216_556_038
   end
 end
