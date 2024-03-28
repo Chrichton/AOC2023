@@ -33,14 +33,14 @@ defmodule Day18Flood do
     [direction, distance, color_code] = String.split(line, " ")
 
     distance = String.to_integer(distance)
-    color_code = String.slice(color_code, 1, String.length(color_code) - 2)
+    color_code = String.slice(color_code, 2, String.length(color_code) - 3)
     Command.new(direction, distance, color_code)
   end
 
-  def solve(input) do
+  def solve(input, read_input_func) do
     vertices =
       input
-      |> read_input()
+      |> read_input_func.()
       |> Enum.reduce(
         {{0, 0}, [{0, 0}]},
         fn %Command{direction: direction, distance: distance}, {last_position, positions} ->
@@ -77,6 +77,42 @@ defmodule Day18Flood do
       "L" -> {x - distance, y}
       "U" -> {x, y - distance}
       "D" -> {x, y + distance}
+    end
+  end
+
+  # ----------------------------------------------------------------------------
+
+  def read_input2(input) do
+    input
+    |> read_input()
+    |> Enum.map(fn %Command{color_code: color_code} ->
+      {direction, distance} = parse_color_code(color_code)
+      %Command{direction: direction, distance: distance}
+    end)
+  end
+
+  def parse_color_code(string) do
+    direction =
+      string
+      |> String.last()
+      |> hex_digit_to_direction()
+
+    distance =
+      string
+      |> String.slice(0, 5)
+      |> hex_digits_to_distance()
+
+    {direction, distance}
+  end
+
+  defp hex_digits_to_distance(digits), do: String.to_integer(digits, 16)
+
+  defp hex_digit_to_direction(digit) do
+    case digit do
+      "0" -> "R"
+      "1" -> "D"
+      "2" -> "L"
+      "3" -> "U"
     end
   end
 end
